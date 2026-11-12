@@ -1,36 +1,43 @@
+
 <!DOCTYPE html>
 <html lang="de">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Mein Vokabeltrainer</title>
+  <title>Vokabeltrainer Pro</title>
   <style>
     * { box-sizing: border-box; font-family: system-ui, sans-serif; }
-    body { background: #0f172a; color: #f8fafc; margin: 0; padding: 16px; display: flex; justify-content: center; }
-    .box { width: 100%; max-width: 480px; background: #1e293b; padding: 20px; border-radius: 16px; }
-    h1 { text-align: center; margin: 0 0 16px; font-size: 22px; color: #38bdf8; }
-    h2 { font-size: 16px; margin: 20px 0 8px; border-bottom: 1px solid #334155; padding-bottom: 4px; }
-    input, textarea { width: 100%; padding: 10px; margin-bottom: 8px; border-radius: 8px; border: 1px solid #475569; background: #0f172a; color: #fff; font-size: 15px; }
-    textarea { min-height: 95px; resize: vertical; }
+    body { background: #0f172a; color: #f8fafc; margin: 0; padding: 14px; display: flex; justify-content: center; }
+    .box { width: 100%; max-width: 480px; background: #1e293b; padding: 18px; border-radius: 16px; }
+    h1 { text-align: center; margin: 0 0 14px; font-size: 22px; color: #38bdf8; }
+    h2 { font-size: 15px; margin: 18px 0 8px; border-bottom: 1px solid #334155; padding-bottom: 4px; color: #cbd5e1; }
+    input, textarea, select { width: 100%; padding: 10px; margin-bottom: 8px; border-radius: 8px; border: 1px solid #475569; background: #0f172a; color: #fff; font-size: 15px; }
+    textarea { min-height: 85px; resize: vertical; }
     button { width: 100%; padding: 11px; border: none; border-radius: 8px; font-size: 15px; font-weight: bold; cursor: pointer; margin-top: 4px; }
+    .row { display: flex; gap: 8px; }
     .add { background: #22c55e; color: #052e16; }
     .imp { background: #a855f7; color: #fff; }
     .start { background: #38bdf8; color: #082f49; margin-top: 10px; }
+    .warn { background: #f59e0b; color: #451a03; margin-top: 8px; }
     .sec { background: #475569; color: #fff; margin-top: 8px; }
     .clr { background: transparent; border: 1px solid #ef4444; color: #f87171; font-size: 13px; padding: 7px; margin-top: 8px; }
     .del { background: #ef4444; color: #fff; width: auto; padding: 4px 8px; font-size: 12px; margin: 0; }
-    ul { list-style: none; padding: 0; margin: 0; max-height: 200px; overflow-y: auto; }
+    ul { list-style: none; padding: 0; margin: 0; max-height: 180px; overflow-y: auto; }
     li { display: flex; justify-content: space-between; align-items: center; background: #0f172a; padding: 8px 10px; border-radius: 8px; margin-bottom: 6px; font-size: 14px; }
     #quiz { display: none; text-align: center; }
-    .word { font-size: 26px; font-weight: bold; margin: 18px 0; color: #facc15; }
+    .bar-bg { width: 100%; height: 8px; background: #0f172a; border-radius: 4px; margin: 10px 0; overflow: hidden; }
+    .bar { height: 100%; background: #38bdf8; width: 0%; transition: width 0.3s; }
+    .word { font-size: 26px; font-weight: bold; margin: 16px 0; color: #facc15; }
     .fb { margin-top: 12px; font-weight: bold; min-height: 22px; }
     .ok { color: #4ade80; }
     .no { color: #f87171; }
+    .badge { font-size: 11px; padding: 2px 6px; border-radius: 4px; background: #334155; margin-left: 6px; color: #94a3b8; }
   </style>
 </head>
 <body>
 <div class="box">
-  <h1>📚 Mein Vokabeltrainer</h1>
+  <h1>📚 Vokabeltrainer Pro</h1>
+
   <div id="setup">
     <h2>Einzelne Vokabel</h2>
     <input id="f" placeholder="Fremdwort (z. B. apple)">
@@ -39,87 +46,154 @@
 
     <h2>Liste importieren (Wort - Übersetzung)</h2>
     <textarea id="bulk" placeholder="apple - Apfel&#10;dog = Hund&#10;house ; Haus"></textarea>
-    <button class="imp" onclick="imp()">📥 Liste importieren</button>
+    <div class="row">
+      <button class="imp" onclick="imp()">📥 Importieren</button>
+      <button class="sec" style="margin-top:4px;" onclick="exp()">📤 Exportieren</button>
+    </div>
+
+    <h2>Abfrage-Einstellungen</h2>
+    <select id="dir">
+      <option value="fb">Fremdwort ➔ Deutsch</option>
+      <option value="bf">Deutsch ➔ Fremdwort</option>
+      <option value="mix">Gemischt (Zufällige Richtung)</option>
+    </select>
 
     <h2>Vokabeln (<span id="cnt">0</span>)</h2>
     <ul id="list"></ul>
-    <button class="start" onclick="start()">Abfrage starten ▶</button>
+    <button class="start" onclick="start(v)">Alle abfragen ▶</button>
     <button class="clr" onclick="clr()">Alle löschen</button>
   </div>
 
   <div id="quiz">
-    <div style="font-size:13px;color:#94a3b8;">Richtig: <span id="sc">0</span> | Offen: <span id="rem">0</span></div>
+    <div style="font-size:13px;color:#94a3b8;">Richtig: <span id="sc">0</span> | Falsch: <span id="wr">0</span> | Offen: <span id="rem">0</span></div>
+    <div class="bar-bg"><div class="bar" id="bar"></div></div>
+    <div id="dir-hint" style="font-size:12px;color:#38bdf8;"></div>
     <div class="word" id="qw">---</div>
-    <input id="ans" placeholder="Übersetzung eingeben..." autocomplete="off">
+    <input id="ans" placeholder="Antwort eingeben..." autocomplete="off">
     <button class="start" id="chk" onclick="chk()">Prüfen</button>
+    <button class="sec" id="hint-btn" onclick="hint()">💡 Tipp (Erster Buchstabe)</button>
     <button class="start" id="nxt" style="display:none;" onclick="nxt()">Weiter ➡</button>
     <div class="fb" id="fb"></div>
-    <button class="sec" onclick="stop()">Zurück</button>
+    <button class="warn" id="rep" style="display:none;" onclick="start(wrongList)">🔁 Falsche Vokabeln wiederholen</button>
+    <button class="sec" onclick="stop()">Zurück zur Übersicht</button>
   </div>
 </div>
 
 <script>
-  let v = JSON.parse(localStorage.getItem('vok')) || [], q = [], cur = null, sc = 0;
+  let v = JSON.parse(localStorage.getItem('vok')) || [], q = [], wrongList = [], cur = null, sc = 0, total = 0, askBack = false;
   const save = () => { localStorage.setItem('vok', JSON.stringify(v)); render(); };
+
   function render() {
     document.getElementById('cnt').textContent = v.length;
-    document.getElementById('list').innerHTML = v.map((x, i) => `<li><span><b>${x.f}</b> – ${x.b}</span><button class="del" onclick="del(${i})">X</button></li>`).join('');
+    document.getElementById('list').innerHTML = v.map((x, i) => `
+      <li>
+        <span><b>${x.f}</b> – ${x.b} <span class="badge">${x.ok || 0}x ✓</span></span>
+        <button class="del" onclick="del(${i})">X</button>
+      </li>`).join('');
   }
+
   function add() {
     let f = document.getElementById('f'), b = document.getElementById('b');
     if (!f.value.trim() || !b.value.trim()) return alert('Bitte beide Felder ausfüllen!');
-    v.push({ f: f.value.trim(), b: b.value.trim() });
+    v.push({ f: f.value.trim(), b: b.value.trim(), ok: 0 });
     f.value = ''; b.value = ''; save();
   }
+
   function imp() {
     let t = document.getElementById('bulk'), c = 0;
     t.value.split('\n').forEach(l => {
       let m = l.trim().match(/^(.+?)\s*(?:[-–=;:\t])\s*(.+)$/);
-      if (m) { v.push({ f: m[1].trim(), b: m[2].trim() }); c++; }
+      if (m) { v.push({ f: m[1].trim(), b: m[2].trim(), ok: 0 }); c++; }
     });
     if (c) { t.value = ''; save(); alert(c + ' Vokabeln importiert!'); }
     else alert('Format: Wort - Übersetzung (je eine Zeile)');
   }
+
+  function exp() {
+    if (!v.length) return alert('Keine Vokabeln zum Exportieren da!');
+    document.getElementById('bulk').value = v.map(x => `${x.f} - ${x.b}`).join('\n');
+    alert('Deine Liste steht jetzt oben im Textfeld bereit zum Kopieren!');
+  }
+
   const del = i => { v.splice(i, 1); save(); };
   const clr = () => { if (v.length && confirm('Wirklich alle löschen?')) { v = []; save(); } };
-  function start() {
-    if (!v.length) return alert('Bitte erst Vokabeln eintragen!');
-    q = [...v].sort(() => Math.random() - 0.5); sc = 0;
+
+  function start(pool) {
+    if (!pool.length) return alert('Bitte erst Vokabeln eintragen!');
+    q = [...pool].sort(() => Math.random() - 0.5);
+    wrongList = []; sc = 0; total = q.length;
     document.getElementById('setup').style.display = 'none';
     document.getElementById('quiz').style.display = 'block';
+    document.getElementById('rep').style.display = 'none';
     nxt();
   }
+
   function nxt() {
-    let fb = document.getElementById('fb'), ans = document.getElementById('ans');
+    let fb = document.getElementById('fb'), ans = document.getElementById('ans'), mode = document.getElementById('dir').value;
     fb.textContent = ''; fb.className = 'fb'; ans.value = ''; ans.disabled = false;
     document.getElementById('chk').style.display = 'block';
+    document.getElementById('hint-btn').style.display = 'block';
     document.getElementById('nxt').style.display = 'none';
+    document.getElementById('bar').style.width = (((total - q.length) / total) * 100) + '%';
+
     if (!q.length) {
-      document.getElementById('qw').textContent = '🎉 Fertig!';
-      fb.textContent = `${sc} von ${v.length} richtig!`; fb.classList.add('ok');
+      document.getElementById('qw').textContent = '🎉 Runde beendet!';
+      document.getElementById('dir-hint').textContent = '';
+      fb.textContent = `Ergebnis: ${sc} von ${total} richtig!`; fb.classList.add('ok');
       ans.style.display = 'none'; document.getElementById('chk').style.display = 'none';
-      document.getElementById('rem').textContent = '0'; return;
+      document.getElementById('hint-btn').style.display = 'none';
+      document.getElementById('rem').textContent = '0';
+      if (wrongList.length) document.getElementById('rep').style.display = 'block';
+      save(); return;
     }
+
     ans.style.display = 'block'; cur = q.pop();
-    document.getElementById('qw').textContent = cur.f;
+    askBack = mode === 'bf' || (mode === 'mix' && Math.random() < 0.5);
+    document.getElementById('dir-hint').textContent = askBack ? 'Übersetze ins Fremdwort:' : 'Übersetze ins Deutsche:';
+    document.getElementById('qw').textContent = askBack ? cur.b : cur.f;
     document.getElementById('sc').textContent = sc;
+    document.getElementById('wr').textContent = wrongList.length;
     document.getElementById('rem').textContent = q.length + 1;
     ans.focus();
   }
+
+  function hint() {
+    let target = askBack ? cur.f : cur.b;
+    let ans = document.getElementById('ans');
+    ans.value = target.slice(0, ans.value.length + 1);
+    ans.focus();
+  }
+
   function chk() {
     let ans = document.getElementById('ans'), fb = document.getElementById('fb');
+    let target = (askBack ? cur.f : cur.b).trim();
     if (!ans.value.trim()) return;
     ans.disabled = true;
     document.getElementById('chk').style.display = 'none';
+    document.getElementById('hint-btn').style.display = 'none';
     document.getElementById('nxt').style.display = 'block';
-    if (ans.value.trim().toLowerCase() === cur.b.trim().toLowerCase()) {
-      sc++; document.getElementById('sc').textContent = sc;
+
+    // Erlaubt auch mehrere richtige Antworten durch Komma oder Schrägstrich getrennt
+    let validAnswers = target.toLowerCase().split(/[,/]/).map(s => s.trim());
+    if (validAnswers.includes(ans.value.trim().toLowerCase())) {
+      sc++; cur.ok = (cur.ok || 0) + 1;
+      document.getElementById('sc').textContent = sc;
       fb.textContent = '✅ Richtig!'; fb.classList.add('ok');
     } else {
-      fb.textContent = '❌ Falsch! Richtig: ' + cur.b; fb.classList.add('no');
+      wrongList.push(cur);
+      document.getElementById('wr').textContent = wrongList.length;
+      fb.textContent = '❌ Falsch! Richtig: ' + target; fb.classList.add('no');
     }
   }
-  const stop = () => { document.getElementById('quiz').style.display = 'none'; document.getElementById('setup').style.display = 'block'; };
+
+  document.getElementById('ans').addEventListener('keypress', e => {
+    if (e.key === 'Enter') {
+      if (document.getElementById('chk').style.display !== 'none') chk();
+      else if (document.getElementById('nxt').style.display !== 'none') nxt();
+    }
+  });
+
+  const stop = () => { document.getElementById('quiz').style.display = 'none'; document.getElementById('setup').style.display = 'block'; render(); };
   render();
 </script>
 </body>
