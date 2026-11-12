@@ -3,298 +3,282 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Vokabeltrainer Pro</title>
+  <title>Vokabeltrainer Ultimate</title>
   <style>
+    :root { --bg:#0f172a; --card:#1e293b; --inp:#0f172a; --txt:#f8fafc; --sub:#94a3b8; --brd:#475569; }
+    body.light { --bg:#f1f5f9; --card:#ffffff; --inp:#f8fafc; --txt:#0f172a; --sub:#475569; --brd:#cbd5e1; }
     * { box-sizing: border-box; font-family: system-ui, sans-serif; }
-    body { background: #0f172a; color: #f8fafc; margin: 0; padding: 14px; display: flex; justify-content: center; }
-    .box { width: 100%; max-width: 480px; background: #1e293b; padding: 18px; border-radius: 16px; }
-    h1 { text-align: center; margin: 0 0 14px; font-size: 22px; color: #38bdf8; }
-    h2 { font-size: 15px; margin: 18px 0 8px; border-bottom: 1px solid #334155; padding-bottom: 4px; color: #cbd5e1; }
-    input, textarea, select { width: 100%; padding: 10px; margin-bottom: 8px; border-radius: 8px; border: 1px solid #475569; background: #0f172a; color: #fff; font-size: 15px; }
-    textarea { min-height: 85px; resize: vertical; }
-    button { width: 100%; padding: 11px; border: none; border-radius: 8px; font-size: 15px; font-weight: bold; cursor: pointer; margin-top: 4px; }
-    .row { display: flex; gap: 8px; }
+    body { background: var(--bg); color: var(--txt); margin: 0; padding: 12px; display: flex; justify-content: center; transition: 0.2s; }
+    .box { width: 100%; max-width: 490px; background: var(--card); padding: 16px; border-radius: 16px; box-shadow: 0 8px 20px rgba(0,0,0,0.25); }
+    .top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+    h1 { margin: 0; font-size: 20px; color: #38bdf8; }
+    h2 { font-size: 14px; margin: 16px 0 8px; border-bottom: 1px solid var(--brd); padding-bottom: 4px; color: var(--sub); }
+    .stats { display: flex; justify-content: space-around; background: var(--inp); padding: 8px; border-radius: 10px; font-size: 13px; font-weight: bold; margin-bottom: 12px; border: 1px solid var(--brd); }
+    input, textarea, select { width: 100%; padding: 9px; margin-bottom: 7px; border-radius: 8px; border: 1px solid var(--brd); background: var(--inp); color: var(--txt); font-size: 14px; }
+    textarea { min-height: 75px; resize: vertical; }
+    button { width: 100%; padding: 10px; border: none; border-radius: 8px; font-size: 14px; font-weight: bold; cursor: pointer; margin-top: 4px; }
+    .row { display: flex; gap: 6px; align-items: center; }
+    .ico { width: auto; padding: 7px 10px; background: var(--inp); color: var(--txt); border: 1px solid var(--brd); margin: 0; }
     .add { background: #22c55e; color: #052e16; }
     .imp { background: #a855f7; color: #fff; }
-    .start { background: #38bdf8; color: #082f49; margin-top: 10px; }
-    .spd { background: #f43f5e; color: #fff; margin-top: 8px; }
-    .warn { background: #f59e0b; color: #451a03; margin-top: 8px; }
-    .sec { background: #475569; color: #fff; margin-top: 8px; }
-    .clr { background: transparent; border: 1px solid #ef4444; color: #f87171; font-size: 13px; padding: 7px; margin-top: 8px; }
-    .del { background: #ef4444; color: #fff; width: auto; padding: 4px 8px; font-size: 12px; margin: 0; }
-    ul { list-style: none; padding: 0; margin: 0; max-height: 170px; overflow-y: auto; }
-    li { display: flex; justify-content: space-between; align-items: center; background: #0f172a; padding: 8px 10px; border-radius: 8px; margin-bottom: 6px; font-size: 14px; }
-    #quiz, #speed-box { display: none; text-align: center; }
-    .bar-bg { width: 100%; height: 8px; background: #0f172a; border-radius: 4px; margin: 10px 0; overflow: hidden; }
+    .start { background: #38bdf8; color: #082f49; margin-top: 8px; }
+    .spd { background: #f43f5e; color: #fff; margin-top: 6px; }
+    .flp { background: #14b8a6; color: #042f2e; margin-top: 6px; }
+    .warn { background: #f59e0b; color: #451a03; margin-top: 6px; }
+    .sec { background: #475569; color: #fff; margin-top: 6px; }
+    .clr { background: transparent; border: 1px solid #ef4444; color: #f87171; font-size: 12px; padding: 6px; margin-top: 8px; }
+    .mini { width: auto; padding: 4px 7px; font-size: 12px; margin: 0 0 0 4px; }
+    ul { list-style: none; padding: 0; margin: 0; max-height: 165px; overflow-y: auto; }
+    li { display: flex; justify-content: space-between; align-items: center; background: var(--inp); padding: 7px 9px; border-radius: 8px; margin-bottom: 5px; font-size: 13px; border: 1px solid var(--brd); }
+    #quiz, #speed-box, #flip-box { display: none; text-align: center; }
+    .bar-bg { width: 100%; height: 8px; background: var(--inp); border-radius: 4px; margin: 8px 0; overflow: hidden; }
     .bar { height: 100%; background: #38bdf8; width: 0%; transition: width 0.3s; }
     .t-bar { height: 100%; background: #f43f5e; width: 100%; }
-    .word { font-size: 26px; font-weight: bold; margin: 16px 0; color: #facc15; }
-    .fb { margin-top: 12px; font-weight: bold; min-height: 22px; }
-    .ok { color: #4ade80; }
-    .no { color: #f87171; }
-    .badge { font-size: 11px; padding: 2px 6px; border-radius: 4px; background: #334155; margin-left: 6px; color: #94a3b8; }
-    .opt { background: #0f172a; color: #f8fafc; border: 1px solid #475569; margin-bottom: 8px; padding: 13px; font-size: 16px; }
+    .word { font-size: 25px; font-weight: bold; margin: 14px 0; color: #eab308; display: flex; justify-content: center; align-items: center; gap: 8px; }
+    .fb { margin-top: 10px; font-weight: bold; min-height: 20px; font-size: 14px; }
+    .ok { color: #22c55e; }
+    .no { color: #ef4444; }
+    .badge { font-size: 11px; padding: 2px 5px; border-radius: 4px; background: var(--card); color: var(--sub); border: 1px solid var(--brd); }
+    .opt { background: var(--inp); color: var(--txt); border: 1px solid var(--brd); margin-bottom: 7px; padding: 12px; font-size: 15px; }
     .opt.right { background: #16a34a; border-color: #22c55e; color: #fff; }
     .opt.wrong { background: #dc2626; border-color: #ef4444; color: #fff; }
+    .card-ui { background: var(--inp); border: 2px solid #38bdf8; border-radius: 14px; padding: 36px 16px; margin: 14px 0; cursor: pointer; min-height: 150px; display: flex; flex-direction: column; justify-content: center; align-items: center; }
   </style>
 </head>
 <body>
 <div class="box">
-  <h1>📚 Vokabeltrainer Pro</h1>
+  <div class="top">
+    <h1>📚 Vokabeltrainer</h1>
+    <div class="row">
+      <button class="ico" id="snd-btn" onclick="toggleSnd()">🔊</button>
+      <button class="ico" onclick="toggleTheme()">🌓</button>
+    </div>
+  </div>
+  <div class="stats">
+    <span>🔥 Serie: <span id="st-streak">0</span> Tage</span>
+    <span>🏆 Speed-Rekord: <span id="st-hi">0</span>/10</span>
+  </div>
 
   <div id="setup">
-    <h2>Einzelne Vokabel</h2>
-    <input id="f" placeholder="Fremdwort (z. B. apple)">
-    <input id="b" placeholder="Übersetzung (z. B. Apfel)">
+    <h2>Ordner / Lektion & Sprache</h2>
+    <div class="row" style="margin-bottom:6px;">
+      <select id="deck-sel" style="margin:0;" onchange="changeDeck()"></select>
+      <button class="ico" onclick="newDeck()">+ Ordner</button>
+      <button class="ico" onclick="delDeck()">🗑️</button>
+    </div>
+    <div class="row">
+      <select id="lang" style="margin:0;">
+        <option value="en-US">🔊 Englisch (US)</option>
+        <option value="en-GB">🔊 Englisch (UK)</option>
+        <option value="fr-FR">🔊 Französisch</option>
+        <option value="es-ES">🔊 Spanisch</option>
+        <option value="it-IT">🔊 Italienisch</option>
+        <option value="la">🔊 Latein / Deutsch</option>
+      </select>
+      <select id="dir" style="margin:0;">
+        <option value="fb">Fremdwort ➔ DE</option>
+        <option value="bf">DE ➔ Fremdwort</option>
+        <option value="mix">Gemischt</option>
+      </select>
+    </div>
+
+    <h2>Vokabel hinzufügen</h2>
+    <div class="row">
+      <input id="f" placeholder="Fremdwort" style="margin:0;">
+      <input id="b" placeholder="Übersetzung" style="margin:0;">
+    </div>
     <button class="add" onclick="add()">+ Speichern</button>
 
-    <h2>Liste importieren (Wort - Übersetzung)</h2>
-    <textarea id="bulk" placeholder="apple - Apfel&#10;dog = Hund&#10;house ; Haus"></textarea>
+    <h2>Liste importieren / exportieren</h2>
+    <textarea id="bulk" placeholder="apple - Apfel&#10;dog = Hund"></textarea>
     <div class="row">
       <button class="imp" onclick="imp()">📥 Importieren</button>
       <button class="sec" style="margin-top:4px;" onclick="exp()">📤 Exportieren</button>
     </div>
 
-    <h2>Abfrage-Einstellungen</h2>
-    <select id="dir">
-      <option value="fb">Fremdwort ➔ Deutsch</option>
-      <option value="bf">Deutsch ➔ Fremdwort</option>
-      <option value="mix">Gemischt (Zufällige Richtung)</option>
-    </select>
-
-    <h2>Vokabeln (<span id="cnt">0</span>)</h2>
+    <h2>Vokabeln in diesem Ordner (<span id="cnt">0</span>)</h2>
     <ul id="list"></ul>
-    <button class="start" onclick="start(v)">Alle abfragen ▶</button>
-    <button class="spd" onclick="startSpeed()">⚡ Speed-Modus (10 Wörter / 5 Sek.)</button>
-    <button class="clr" onclick="clr()">Alle löschen</button>
-  </div>
 
-  <div id="quiz">
-    <div style="font-size:13px;color:#94a3b8;">Richtig: <span id="sc">0</span> | Falsch: <span id="wr">0</span> | Offen: <span id="rem">0</span></div>
+    <button class="start" onclick="start(curV())">▶ Alle abfragen</button>
+    <button class="warn" onclick="startWeak()">🎯 Nur unsichere üben (&lt;2x ✓)</button>
+    <button class="flp" onclick="startFlip()">🗂️ Karteikarten-Modus</button>
+    <button class="spd" onclick="startSpeed()">⚡ Speed-Modus (10 Wörter / 5s)</button>
+    <button class="clr" onclick="clr()">Ordner leeren</button>
+  </div>
+    <div id="quiz">
+    <div style="font-size:12px;color:var(--sub);">Richtig: <span id="sc">0</span> | Falsch: <span id="wr">0</span> | Offen: <span id="rem">0</span></div>
     <div class="bar-bg"><div class="bar" id="bar"></div></div>
     <div id="dir-hint" style="font-size:12px;color:#38bdf8;"></div>
-    <div class="word" id="qw">---</div>
+    <div class="word"><span id="qw">---</span><button class="ico" onclick="speakCur(cur, askBack)">🔊</button></div>
     <input id="ans" placeholder="Antwort eingeben..." autocomplete="off">
     <button class="start" id="chk" onclick="chk()">Prüfen</button>
-    <button class="sec" id="hint-btn" onclick="hint()">💡 Tipp (Erster Buchstabe)</button>
+    <button class="sec" id="hint-btn" onclick="hint()">💡 Tipp</button>
     <button class="start" id="nxt" style="display:none;" onclick="nxt()">Weiter ➡</button>
     <div class="fb" id="fb"></div>
-    <button class="warn" id="rep" style="display:none;" onclick="start(wrongList)">🔁 Falsche Vokabeln wiederholen</button>
-    <button class="sec" onclick="stop()">Zurück zur Übersicht</button>
+    <button class="warn" id="rep" style="display:none;" onclick="start(wrongList)">🔁 Falsche wiederholen</button>
+    <button class="sec" onclick="stop()">Zurück</button>
+  </div>
+
+  <div id="flip-box">
+    <div style="font-size:12px;color:var(--sub);">Karte <span id="fl-num">1</span>/<span id="fl-tot">0</span></div>
+    <div class="card-ui" onclick="flipCard()">
+      <div style="font-size:11px;color:var(--sub);margin-bottom:6px;" id="fl-side">VORDERSEITE (Tippen zum Drehen)</div>
+      <div style="font-size:24px;font-weight:bold;color:#eab308;" id="fl-txt">---</div>
+    </div>
+    <button class="ico" style="width:100%;margin-bottom:6px;" onclick="speakCur(flCur, false)">🔊 Fremdwort anhören</button>
+    <div class="row">
+      <button class="warn" onclick="nextFlip(false)">❌ Nochmal üben</button>
+      <button class="add" onclick="nextFlip(true)">✅ Gewusst</button>
+    </div>
+    <button class="sec" onclick="stop()">Zurück</button>
   </div>
 
   <div id="speed-box">
-    <div style="font-size:13px;color:#94a3b8;">Frage <span id="s-num">1</span>/<span id="s-tot">10</span> | Punkte: <span id="s-sc">0</span></div>
+    <div style="font-size:12px;color:var(--sub);">Frage <span id="s-num">1</span>/<span id="s-tot">10</span> | Punkte: <span id="s-sc">0</span></div>
     <div class="bar-bg"><div class="t-bar" id="t-bar"></div></div>
     <div id="s-hint" style="font-size:12px;color:#f43f5e;">⚡ Schnell wählen!</div>
-    <div class="word" id="s-qw">---</div>
+    <div class="word"><span id="s-qw">---</span><button class="ico" onclick="speakCur(sCur, sBack)">🔊</button></div>
     <div id="s-opts"></div>
     <div class="fb" id="s-fb"></div>
     <button class="spd" id="s-again" style="display:none;" onclick="startSpeed()">⚡ Nochmal spielen</button>
-    <button class="sec" onclick="stop()">Zurück zur Übersicht</button>
+    <button class="sec" onclick="stop()">Zurück</button>
   </div>
 </div>
-  <script>
-  let v = JSON.parse(localStorage.getItem('vok')) || [], q = [], wrongList = [], cur = null, sc = 0, total = 0, askBack = false;
-  let sq = [], sCur = null, sSc = 0, sTot = 0, sTimer = null, sLocked = false;
-  const save = () => { localStorage.setItem('vok', JSON.stringify(v)); render(); };
+<script>
+  let db = JSON.parse(localStorage.getItem('vokDB')) || { decks: { 'Standard': JSON.parse(localStorage.getItem('vok')) || [] }, cur: 'Standard', hi: 0, streak: 0, last: '' };
+  let snd = localStorage.getItem('vokSnd') !== '0', q = [], wrongList = [], cur = null, sc = 0, total = 0, askBack = false;
+  let sq = [], sCur = null, sSc = 0, sTot = 0, sTimer = null, sLocked = false, sBack = false;
+  let flQ = [], flCur = null, flFlipped = false, flTot = 0;
+
+  if (localStorage.getItem('vokLight') === '1') document.body.classList.add('light');
+  document.getElementById('snd-btn').textContent = snd ? '🔊' : '🔇';
+
+  const curV = () => db.decks[db.cur] || [];
+  const save = () => { localStorage.setItem('vokDB', JSON.stringify(db)); render(); };
+
+  function markLearned() {
+    let today = new Date().toISOString().slice(0, 10), yest = new Date(Date.now() - 86400000).toISOString().slice(0, 10);
+    if (db.last !== today) { db.streak = (db.last === yest) ? db.streak + 1 : 1; db.last = today; }
+  }
+
+  function beep(ok) {
+    if (navigator.vibrate) navigator.vibrate(ok ? 40 :);
+    if (!snd) return;
+    try {
+      let ctx = new (window.AudioContext || window.webkitAudioContext)(), o = ctx.createOscillator(), g = ctx.createGain();
+      o.connect(g); g.connect(ctx.destination);
+      o.frequency.value = ok ? 620 : 190; o.type = ok ? 'sine' : 'sawtooth';
+      g.gain.setValueAtTime(0.12, ctx.currentTime); g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.18);
+      o.start(); o.stop(ctx.currentTime + 0.18);
+    } catch (e) {}
+  }
+
+  function speakCur(item, isBack) {
+    if (!item || !('speechSynthesis' in window)) return;
+    speechSynthesis.cancel();
+    let u = new SpeechSynthesisUtterance(isBack ? item.b : item.f);
+    u.lang = isBack ? 'de-DE' : document.getElementById('lang').value;
+    speechSynthesis.speak(u);
+  }
+
+  const toggleSnd = () => { snd = !snd; localStorage.setItem('vokSnd', snd ? '1' : '0'); document.getElementById('snd-btn').textContent = snd ? '🔊' : '🔇'; };
+  const toggleTheme = () => { document.body.classList.toggle('light'); localStorage.setItem('vokLight', document.body.classList.contains('light') ? '1' : '0'); };
 
   function render() {
-    document.getElementById('cnt').textContent = v.length;
-    document.getElementById('list').innerHTML = v.map((x, i) => `<li><span><b>${x.f}</b> – ${x.b} <span class="badge">${x.ok || 0}x ✓</span></span><button class="del" onclick="del(${i})">X</button></li>`).join('');
+    document.getElementById('st-streak').textContent = db.streak;
+    document.getElementById('st-hi').textContent = db.hi;
+    document.getElementById('deck-sel').innerHTML = Object.keys(db.decks).map(k => `<option value="${k}" ${k === db.cur ? 'selected' : ''}>📁 ${k}</option>`).join('');
+    document.getElementById('cnt').textContent = curV().length;
+    document.getElementById('list').innerHTML = curV().map((x, i) => `
+      <li><span><b>${x.f}</b> – ${x.b} <span class="badge">${x.ok || 0}x ✓</span></span>
+      <span><button class="ico mini" onclick="editV(${i})">✏️</button><button class="mini" style="background:#ef4444;color:#fff;" onclick="del(${i})">X</button></span></li>`).join('');
   }
+
+  function newDeck() { let n = prompt('Name für neuen Ordner:'); if (n && n.trim() && !db.decks[n.trim()]) { db.decks[n.trim()] = []; db.cur = n.trim(); save(); } }
+  function delDeck() { if (Object.keys(db.decks).length <= 1) return alert('Letzter Ordner kann nicht gelöscht werden.'); if (confirm(`Ordner "${db.cur}" löschen?`)) { delete db.decks[db.cur]; db.cur = Object.keys(db.decks); save(); } }
+  const changeDeck = () => { db.cur = document.getElementById('deck-sel').value; save(); };
 
   function add() {
     let f = document.getElementById('f'), b = document.getElementById('b');
     if (!f.value.trim() || !b.value.trim()) return alert('Bitte beide Felder ausfüllen!');
-    v.push({ f: f.value.trim(), b: b.value.trim(), ok: 0 });
-    f.value = ''; b.value = ''; save();
+    curV().push({ f: f.value.trim(), b: b.value.trim(), ok: 0 }); f.value = ''; b.value = ''; save();
   }
-
+  function editV(i) {
+    let item = curV()[i], nf = prompt('Fremdwort:', item.f); if (nf === null) return;
+    let nb = prompt('Übersetzung:', item.b); if (nb === null) return;
+    if (nf.trim() && nb.trim()) { item.f = nf.trim(); item.b = nb.trim(); save(); }
+  }
   function imp() {
     let t = document.getElementById('bulk'), c = 0;
-    t.value.split('\n').forEach(l => {
-      let m = l.trim().match(/^(.+?)\s*(?:[-–=;:\t])\s*(.+)$/);
-      if (m) { v.push({ f: m.trim(), b: m.trim(), ok: 0 }); c++; }
-    });
-    if (c) { t.value = ''; save(); alert(c + ' Vokabeln importiert!'); }
-    else alert('Format: Wort - Übersetzung (je eine Zeile)');
+    t.value.split('\n').forEach(l => { let m = l.trim().match(/^(.+?)\s*(?:[-–=;:\t])\s*(.+)$/); if (m) { curV().push({ f: m.trim(), b: m.trim(), ok: 0 }); c++; } });
+    if (c) { t.value = ''; save(); alert(c + ' Vokabeln importiert!'); } else alert('Format: Wort - Übersetzung');
   }
-
-  function exp() {
-    if (!v.length) return alert('Keine Vokabeln zum Exportieren da!');
-    document.getElementById('bulk').value = v.map(x => `${x.f} - ${x.b}`).join('\n');
-    alert('Deine Liste steht jetzt oben im Textfeld bereit zum Kopieren!');
-  }
-
-  const del = i => { v.splice(i, 1); save(); };
-  const clr = () => { if (v.length && confirm('Wirklich alle löschen?')) { v = []; save(); } };
-
+  function exp() { if (!curV().length) return alert('Ordner ist leer!'); document.getElementById('bulk').value = curV().map(x => `${x.f} - ${x.b}`).join('\n'); alert('Liste steht oben im Textfeld!'); }
+  const del = i => { curV().splice(i, 1); save(); };
+  const clr = () => { if (curV().length && confirm('Ordner wirklich leeren?')) { db.decks[db.cur] = []; save(); } };
+    function startWeak() { let w = curV().filter(x => (x.ok || 0) < 2); if (!w.length) return alert('Alle Vokabeln schon mindestens 2x gewusst!'); start(w); }
   function start(pool) {
     if (!pool.length) return alert('Bitte erst Vokabeln eintragen!');
-    q = [...pool].sort(() => Math.random() - 0.5);
-    wrongList = []; sc = 0; total = q.length;
-    document.getElementById('setup').style.display = 'none';
-    document.getElementById('quiz').style.display = 'block';
-    document.getElementById('rep').style.display = 'none';
-    nxt();
+    q = [...pool].sort(() => Math.random() - 0.5); wrongList = []; sc = 0; total = q.length;
+    document.getElementById('setup').style.display = 'none'; document.getElementById('quiz').style.display = 'block'; document.getElementById('rep').style.display = 'none'; nxt();
   }
-
   function nxt() {
     let fb = document.getElementById('fb'), ans = document.getElementById('ans'), mode = document.getElementById('dir').value;
     fb.textContent = ''; fb.className = 'fb'; ans.value = ''; ans.disabled = false;
-    document.getElementById('chk').style.display = 'block';
-    document.getElementById('hint-btn').style.display = 'block';
-    document.getElementById('nxt').style.display = 'none';
+    document.getElementById('chk').style.display = 'block'; document.getElementById('hint-btn').style.display = 'block'; document.getElementById('nxt').style.display = 'none';
     document.getElementById('bar').style.width = (((total - q.length) / total) * 100) + '%';
-
     if (!q.length) {
-      document.getElementById('qw').textContent = '🎉 Runde beendet!';
-      document.getElementById('dir-hint').textContent = '';
-      fb.textContent = `Ergebnis: ${sc} von ${total} richtig!`; fb.classList.add('ok');
-      ans.style.display = 'none'; document.getElementById('chk').style.display = 'none';
-      document.getElementById('hint-btn').style.display = 'none';
-      document.getElementById('rem').textContent = '0';
-      if (wrongList.length) document.getElementById('rep').style.display = 'block';
-      save(); return;
+      document.getElementById('qw').textContent = '🎉 Fertig!'; document.getElementById('dir-hint').textContent = '';
+      fb.textContent = `${sc} von ${total} richtig!`; fb.classList.add('ok'); ans.style.display = 'none';
+      document.getElementById('chk').style.display = 'none'; document.getElementById('hint-btn').style.display = 'none'; document.getElementById('rem').textContent = '0';
+      if (wrongList.length) document.getElementById('rep').style.display = 'block'; markLearned(); save(); return;
     }
-
-    ans.style.display = 'block'; cur = q.pop();
-    askBack = mode === 'bf' || (mode === 'mix' && Math.random() < 0.5);
-    document.getElementById('dir-hint').textContent = askBack ? 'Übersetze ins Fremdwort:' : 'Übersetze ins Deutsche:';
+    ans.style.display = 'block'; cur = q.pop(); askBack = mode === 'bf' || (mode === 'mix' && Math.random() < 0.5);
+    document.getElementById('dir-hint').textContent = askBack ? 'Ins Fremdwort übersetzen:' : 'Ins Deutsche übersetzen:';
     document.getElementById('qw').textContent = askBack ? cur.b : cur.f;
-    document.getElementById('sc').textContent = sc;
-    document.getElementById('wr').textContent = wrongList.length;
-    document.getElementById('rem').textContent = q.length + 1;
-    ans.focus();
+    document.getElementById('sc').textContent = sc; document.getElementById('wr').textContent = wrongList.length; document.getElementById('rem').textContent = q.length + 1; ans.focus();
   }
-
-  function hint() {
-    let target = askBack ? cur.f : cur.b;
-    let ans = document.getElementById('ans');
-    ans.value = target.slice(0, ans.value.length + 1);
-    ans.focus();
-  }
-
+  function hint() { let t = askBack ? cur.f : cur.b, a = document.getElementById('ans'); a.value = t.slice(0, a.value.length + 1); a.focus(); }
   function chk() {
-    let ans = document.getElementById('ans'), fb = document.getElementById('fb');
-    let target = (askBack ? cur.f : cur.b).trim();
+    let ans = document.getElementById('ans'), fb = document.getElementById('fb'), target = (askBack ? cur.f : cur.b).trim();
     if (!ans.value.trim()) return;
-    ans.disabled = true;
-    document.getElementById('chk').style.display = 'none';
-    document.getElementById('hint-btn').style.display = 'none';
-    document.getElementById('nxt').style.display = 'block';
-
-    let validAnswers = target.toLowerCase().split(/[,/]/).map(s => s.trim());
-    if (validAnswers.includes(ans.value.trim().toLowerCase())) {
-      sc++; cur.ok = (cur.ok || 0) + 1;
-      document.getElementById('sc').textContent = sc;
-      fb.textContent = '✅ Richtig!'; fb.classList.add('ok');
-    } else {
-      wrongList.push(cur);
-      document.getElementById('wr').textContent = wrongList.length;
-      fb.textContent = '❌ Falsch! Richtig: ' + target; fb.classList.add('no');
-    }
+    ans.disabled = true; document.getElementById('chk').style.display = 'none'; document.getElementById('hint-btn').style.display = 'none'; document.getElementById('nxt').style.display = 'block';
+    if (target.toLowerCase().split(/[,/]/).map(s => s.trim()).includes(ans.value.trim().toLowerCase())) {
+      sc++; cur.ok = (cur.ok || 0) + 1; beep(true); document.getElementById('sc').textContent = sc; fb.textContent = '✅ Richtig!'; fb.classList.add('ok');
+    } else { wrongList.push(cur); beep(false); document.getElementById('wr').textContent = wrongList.length; fb.textContent = '❌ Falsch! Richtig: ' + target; fb.classList.add('no'); }
   }
+  document.getElementById('ans').addEventListener('keypress', e => { if (e.key === 'Enter') document.getElementById('chk').style.display !== 'none' ? chk() : nxt(); });
 
-  document.getElementById('ans').addEventListener('keypress', e => {
-    if (e.key === 'Enter') {
-      if (document.getElementById('chk').style.display !== 'none') chk();
-      else if (document.getElementById('nxt').style.display !== 'none') nxt();
-    }
-  });
+  function startFlip() { if (!curV().length) return alert('Ordner ist leer!'); flQ = [...curV()].sort(() => Math.random() - 0.5); flTot = flQ.length; document.getElementById('setup').style.display = 'none'; document.getElementById('flip-box').style.display = 'block'; loadFlip(); }
+  function loadFlip() { if (!flQ.length) { alert('Alle Karten durch!'); markLearned(); save(); stop(); return; } flCur = flQ.pop(); flFlipped = false; document.getElementById('fl-num').textContent = flTot - flQ.length; document.getElementById('fl-tot').textContent = flTot; document.getElementById('fl-side').textContent = 'FREMDWORT (Tippen zum Drehen)'; document.getElementById('fl-txt').textContent = flCur.f; }
+  function flipCard() { flFlipped = !flFlipped; document.getElementById('fl-side').textContent = flFlipped ? 'ÜBERSETZUNG' : 'FREMDWORT'; document.getElementById('fl-txt').textContent = flFlipped ? flCur.b : flCur.f; }
+  function nextFlip(knew) { if (knew) { flCur.ok = (flCur.ok || 0) + 1; beep(true); } else { flQ.unshift(flCur); beep(false); } loadFlip(); }
 
   function startSpeed() {
-    if (v.length < 3) return alert('Für den Speed-Modus brauchst du mindestens 3 gespeicherte Vokabeln!');
-    sq = [...v].sort(() => Math.random() - 0.5).slice(0, 10);
-    sSc = 0; sTot = sq.length;
-    document.getElementById('setup').style.display = 'none';
-    document.getElementById('speed-box').style.display = 'block';
-    document.getElementById('s-again').style.display = 'none';
-    document.getElementById('s-tot').textContent = sTot;
-    nextSpeed();
+    if (curV().length < 3) return alert('Mindestens 3 Vokabeln im Ordner nötig!');
+    sq = [...curV()].sort(() => Math.random() - 0.5).slice(0, 10); sSc = 0; sTot = sq.length;
+    document.getElementById('setup').style.display = 'none'; document.getElementById('speed-box').style.display = 'block'; document.getElementById('s-again').style.display = 'none'; document.getElementById('s-tot').textContent = sTot; nextSpeed();
   }
-
   function nextSpeed() {
-    clearInterval(sTimer);
-    let fb = document.getElementById('s-fb'), optsEl = document.getElementById('s-opts'), tBar = document.getElementById('t-bar');
+    clearInterval(sTimer); let fb = document.getElementById('s-fb'), optsEl = document.getElementById('s-opts'), tBar = document.getElementById('t-bar');
     fb.textContent = ''; fb.className = 'fb'; optsEl.innerHTML = '';
-
-    if (!sq.length) {
-      document.getElementById('s-qw').textContent = '⚡ Speed-Runde vorbei!';
-      document.getElementById('s-hint').textContent = '';
-      tBar.style.width = '0%';
-      fb.textContent = `Du hast ${sSc} von ${sTot} richtig geklickt!`; fb.classList.add('ok');
-      document.getElementById('s-again').style.display = 'block';
-      save(); return;
-    }
-
-    sLocked = false;
-    sCur = sq.pop();
-    let mode = document.getElementById('dir').value;
-    let sBack = mode === 'bf' || (mode === 'mix' && Math.random() < 0.5);
-    let correctText = sBack ? sCur.f : sCur.b;
-
-    document.getElementById('s-num').textContent = sTot - sq.length;
-    document.getElementById('s-sc').textContent = sSc;
-    document.getElementById('s-hint').textContent = sBack ? 'Fremdwort wählen:' : 'Übersetzung wählen:';
-    document.getElementById('s-qw').textContent = sBack ? sCur.b : sCur.f;
-
-    let others = v.filter(x => x !== sCur).sort(() => Math.random() - 0.5).slice(0, 2).map(x => sBack ? x.f : x.b);
-    let choices = [correctText, ...others].sort(() => Math.random() - 0.5);
-
-    choices.forEach(c => {
-      let btn = document.createElement('button');
-      btn.className = 'opt';
-      btn.textContent = c;
-      btn.onclick = () => pickSpeed(btn, c === correctText, correctText);
-      optsEl.appendChild(btn);
-    });
-
-    let left = 5000;
-    tBar.style.width = '100%';
-    sTimer = setInterval(() => {
-      left -= 50;
-      tBar.style.width = Math.max(0, (left / 5000) * 100) + '%';
-      if (left <= 0) {
-        clearInterval(sTimer);
-        pickSpeed(null, false, correctText, true);
-      }
-    }, 50);
+    if (!sq.length) { document.getElementById('s-qw').textContent = '⚡ Vorbei!'; document.getElementById('s-hint').textContent = ''; tBar.style.width = '0%'; if (sTot === 10 && sSc > db.hi) db.hi = sSc; fb.textContent = `Punkte: ${sSc} von ${sTot}!`; fb.classList.add('ok'); document.getElementById('s-again').style.display = 'block'; markLearned(); save(); return; }
+    sLocked = false; sCur = sq.pop(); let mode = document.getElementById('dir').value; sBack = mode === 'bf' || (mode === 'mix' && Math.random() < 0.5); let correctText = sBack ? sCur.f : sCur.b;
+    document.getElementById('s-num').textContent = sTot - sq.length; document.getElementById('s-sc').textContent = sSc; document.getElementById('s-hint').textContent = sBack ? 'Fremdwort wählen:' : 'Übersetzung wählen:'; document.getElementById('s-qw').textContent = sBack ? sCur.b : sCur.f;
+    let others = curV().filter(x => x !== sCur).sort(() => Math.random() - 0.5).slice(0, 2).map(x => sBack ? x.f : x.b);
+    [correctText, ...others].sort(() => Math.random() - 0.5).forEach(c => { let btn = document.createElement('button'); btn.className = 'opt'; btn.textContent = c; btn.onclick = () => pickSpeed(btn, c === correctText, correctText); optsEl.appendChild(btn); });
+    let left = 5000; tBar.style.width = '100%';
+    sTimer = setInterval(() => { left -= 50; tBar.style.width = Math.max(0, (left / 5000) * 100) + '%'; if (left <= 0) { clearInterval(sTimer); pickSpeed(null, false, correctText, true); } }, 50);
   }
-
   function pickSpeed(btn, isRight, correctText, timeout = false) {
-    if (sLocked) return;
-    sLocked = true;
-    clearInterval(sTimer);
-
-    let fb = document.getElementById('s-fb');
-    document.querySelectorAll('.opt').forEach(b => {
-      if (b.textContent === correctText) b.classList.add('right');
-    });
-
-    if (isRight) {
-      sSc++; sCur.ok = (sCur.ok || 0) + 1;
-      document.getElementById('s-sc').textContent = sSc;
-      fb.textContent = '✅ Treffer!'; fb.classList.add('ok');
-    } else {
-      if (btn) btn.classList.add('wrong');
-      fb.textContent = timeout ? '⏰ Zeit abgelaufen!' : '❌ Leider falsch!';
-      fb.classList.add('no');
-    }
-
+    if (sLocked) return; sLocked = true; clearInterval(sTimer); let fb = document.getElementById('s-fb');
+    document.querySelectorAll('.opt').forEach(b => { if (b.textContent === correctText) b.classList.add('right'); });
+    if (isRight) { sSc++; sCur.ok = (sCur.ok || 0) + 1; beep(true); document.getElementById('s-sc').textContent = sSc; fb.textContent = '✅ Treffer!'; fb.classList.add('ok'); }
+    else { if (btn) btn.classList.add('wrong'); beep(false); fb.textContent = timeout ? '⏰ Zeit um!' : '❌ Falsch!'; fb.classList.add('no'); }
     setTimeout(nextSpeed, 950);
   }
-
-  const stop = () => {
-    clearInterval(sTimer);
-    document.getElementById('quiz').style.display = 'none';
-    document.getElementById('speed-box').style.display = 'none';
-    document.getElementById('setup').style.display = 'block';
-    render();
-  };
+  const stop = () => { clearInterval(sTimer); ['quiz', 'speed-box', 'flip-box'].forEach(id => document.getElementById(id).style.display = 'none'); document.getElementById('setup').style.display = 'block'; render(); };
   render();
 </script>
 </body>
 </html>
-
