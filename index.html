@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="de">
 <head>
@@ -18,20 +17,25 @@
     .add { background: #22c55e; color: #052e16; }
     .imp { background: #a855f7; color: #fff; }
     .start { background: #38bdf8; color: #082f49; margin-top: 10px; }
+    .spd { background: #f43f5e; color: #fff; margin-top: 8px; }
     .warn { background: #f59e0b; color: #451a03; margin-top: 8px; }
     .sec { background: #475569; color: #fff; margin-top: 8px; }
     .clr { background: transparent; border: 1px solid #ef4444; color: #f87171; font-size: 13px; padding: 7px; margin-top: 8px; }
     .del { background: #ef4444; color: #fff; width: auto; padding: 4px 8px; font-size: 12px; margin: 0; }
-    ul { list-style: none; padding: 0; margin: 0; max-height: 180px; overflow-y: auto; }
+    ul { list-style: none; padding: 0; margin: 0; max-height: 170px; overflow-y: auto; }
     li { display: flex; justify-content: space-between; align-items: center; background: #0f172a; padding: 8px 10px; border-radius: 8px; margin-bottom: 6px; font-size: 14px; }
-    #quiz { display: none; text-align: center; }
+    #quiz, #speed-box { display: none; text-align: center; }
     .bar-bg { width: 100%; height: 8px; background: #0f172a; border-radius: 4px; margin: 10px 0; overflow: hidden; }
     .bar { height: 100%; background: #38bdf8; width: 0%; transition: width 0.3s; }
+    .t-bar { height: 100%; background: #f43f5e; width: 100%; }
     .word { font-size: 26px; font-weight: bold; margin: 16px 0; color: #facc15; }
     .fb { margin-top: 12px; font-weight: bold; min-height: 22px; }
     .ok { color: #4ade80; }
     .no { color: #f87171; }
     .badge { font-size: 11px; padding: 2px 6px; border-radius: 4px; background: #334155; margin-left: 6px; color: #94a3b8; }
+    .opt { background: #0f172a; color: #f8fafc; border: 1px solid #475569; margin-bottom: 8px; padding: 13px; font-size: 16px; }
+    .opt.right { background: #16a34a; border-color: #22c55e; color: #fff; }
+    .opt.wrong { background: #dc2626; border-color: #ef4444; color: #fff; }
   </style>
 </head>
 <body>
@@ -61,6 +65,7 @@
     <h2>Vokabeln (<span id="cnt">0</span>)</h2>
     <ul id="list"></ul>
     <button class="start" onclick="start(v)">Alle abfragen ▶</button>
+    <button class="spd" onclick="startSpeed()">⚡ Speed-Modus (10 Wörter / 5 Sek.)</button>
     <button class="clr" onclick="clr()">Alle löschen</button>
   </div>
 
@@ -77,19 +82,26 @@
     <button class="warn" id="rep" style="display:none;" onclick="start(wrongList)">🔁 Falsche Vokabeln wiederholen</button>
     <button class="sec" onclick="stop()">Zurück zur Übersicht</button>
   </div>
-</div>
 
-<script>
+  <div id="speed-box">
+    <div style="font-size:13px;color:#94a3b8;">Frage <span id="s-num">1</span>/<span id="s-tot">10</span> | Punkte: <span id="s-sc">0</span></div>
+    <div class="bar-bg"><div class="t-bar" id="t-bar"></div></div>
+    <div id="s-hint" style="font-size:12px;color:#f43f5e;">⚡ Schnell wählen!</div>
+    <div class="word" id="s-qw">---</div>
+    <div id="s-opts"></div>
+    <div class="fb" id="s-fb"></div>
+    <button class="spd" id="s-again" style="display:none;" onclick="startSpeed()">⚡ Nochmal spielen</button>
+    <button class="sec" onclick="stop()">Zurück zur Übersicht</button>
+  </div>
+</div>
+  <script>
   let v = JSON.parse(localStorage.getItem('vok')) || [], q = [], wrongList = [], cur = null, sc = 0, total = 0, askBack = false;
+  let sq = [], sCur = null, sSc = 0, sTot = 0, sTimer = null, sLocked = false;
   const save = () => { localStorage.setItem('vok', JSON.stringify(v)); render(); };
 
   function render() {
     document.getElementById('cnt').textContent = v.length;
-    document.getElementById('list').innerHTML = v.map((x, i) => `
-      <li>
-        <span><b>${x.f}</b> – ${x.b} <span class="badge">${x.ok || 0}x ✓</span></span>
-        <button class="del" onclick="del(${i})">X</button>
-      </li>`).join('');
+    document.getElementById('list').innerHTML = v.map((x, i) => `<li><span><b>${x.f}</b> – ${x.b} <span class="badge">${x.ok || 0}x ✓</span></span><button class="del" onclick="del(${i})">X</button></li>`).join('');
   }
 
   function add() {
@@ -103,7 +115,7 @@
     let t = document.getElementById('bulk'), c = 0;
     t.value.split('\n').forEach(l => {
       let m = l.trim().match(/^(.+?)\s*(?:[-–=;:\t])\s*(.+)$/);
-      if (m) { v.push({ f: m[1].trim(), b: m[2].trim(), ok: 0 }); c++; }
+      if (m) { v.push({ f: m.trim(), b: m.trim(), ok: 0 }); c++; }
     });
     if (c) { t.value = ''; save(); alert(c + ' Vokabeln importiert!'); }
     else alert('Format: Wort - Übersetzung (je eine Zeile)');
@@ -173,7 +185,6 @@
     document.getElementById('hint-btn').style.display = 'none';
     document.getElementById('nxt').style.display = 'block';
 
-    // Erlaubt auch mehrere richtige Antworten durch Komma oder Schrägstrich getrennt
     let validAnswers = target.toLowerCase().split(/[,/]/).map(s => s.trim());
     if (validAnswers.includes(ans.value.trim().toLowerCase())) {
       sc++; cur.ok = (cur.ok || 0) + 1;
@@ -193,8 +204,97 @@
     }
   });
 
-  const stop = () => { document.getElementById('quiz').style.display = 'none'; document.getElementById('setup').style.display = 'block'; render(); };
+  function startSpeed() {
+    if (v.length < 3) return alert('Für den Speed-Modus brauchst du mindestens 3 gespeicherte Vokabeln!');
+    sq = [...v].sort(() => Math.random() - 0.5).slice(0, 10);
+    sSc = 0; sTot = sq.length;
+    document.getElementById('setup').style.display = 'none';
+    document.getElementById('speed-box').style.display = 'block';
+    document.getElementById('s-again').style.display = 'none';
+    document.getElementById('s-tot').textContent = sTot;
+    nextSpeed();
+  }
+
+  function nextSpeed() {
+    clearInterval(sTimer);
+    let fb = document.getElementById('s-fb'), optsEl = document.getElementById('s-opts'), tBar = document.getElementById('t-bar');
+    fb.textContent = ''; fb.className = 'fb'; optsEl.innerHTML = '';
+
+    if (!sq.length) {
+      document.getElementById('s-qw').textContent = '⚡ Speed-Runde vorbei!';
+      document.getElementById('s-hint').textContent = '';
+      tBar.style.width = '0%';
+      fb.textContent = `Du hast ${sSc} von ${sTot} richtig geklickt!`; fb.classList.add('ok');
+      document.getElementById('s-again').style.display = 'block';
+      save(); return;
+    }
+
+    sLocked = false;
+    sCur = sq.pop();
+    let mode = document.getElementById('dir').value;
+    let sBack = mode === 'bf' || (mode === 'mix' && Math.random() < 0.5);
+    let correctText = sBack ? sCur.f : sCur.b;
+
+    document.getElementById('s-num').textContent = sTot - sq.length;
+    document.getElementById('s-sc').textContent = sSc;
+    document.getElementById('s-hint').textContent = sBack ? 'Fremdwort wählen:' : 'Übersetzung wählen:';
+    document.getElementById('s-qw').textContent = sBack ? sCur.b : sCur.f;
+
+    let others = v.filter(x => x !== sCur).sort(() => Math.random() - 0.5).slice(0, 2).map(x => sBack ? x.f : x.b);
+    let choices = [correctText, ...others].sort(() => Math.random() - 0.5);
+
+    choices.forEach(c => {
+      let btn = document.createElement('button');
+      btn.className = 'opt';
+      btn.textContent = c;
+      btn.onclick = () => pickSpeed(btn, c === correctText, correctText);
+      optsEl.appendChild(btn);
+    });
+
+    let left = 5000;
+    tBar.style.width = '100%';
+    sTimer = setInterval(() => {
+      left -= 50;
+      tBar.style.width = Math.max(0, (left / 5000) * 100) + '%';
+      if (left <= 0) {
+        clearInterval(sTimer);
+        pickSpeed(null, false, correctText, true);
+      }
+    }, 50);
+  }
+
+  function pickSpeed(btn, isRight, correctText, timeout = false) {
+    if (sLocked) return;
+    sLocked = true;
+    clearInterval(sTimer);
+
+    let fb = document.getElementById('s-fb');
+    document.querySelectorAll('.opt').forEach(b => {
+      if (b.textContent === correctText) b.classList.add('right');
+    });
+
+    if (isRight) {
+      sSc++; sCur.ok = (sCur.ok || 0) + 1;
+      document.getElementById('s-sc').textContent = sSc;
+      fb.textContent = '✅ Treffer!'; fb.classList.add('ok');
+    } else {
+      if (btn) btn.classList.add('wrong');
+      fb.textContent = timeout ? '⏰ Zeit abgelaufen!' : '❌ Leider falsch!';
+      fb.classList.add('no');
+    }
+
+    setTimeout(nextSpeed, 950);
+  }
+
+  const stop = () => {
+    clearInterval(sTimer);
+    document.getElementById('quiz').style.display = 'none';
+    document.getElementById('speed-box').style.display = 'none';
+    document.getElementById('setup').style.display = 'block';
+    render();
+  };
   render();
 </script>
 </body>
 </html>
+
