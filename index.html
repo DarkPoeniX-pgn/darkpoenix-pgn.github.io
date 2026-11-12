@@ -5,11 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Vokabeltrainer Pro</title>
   <style>
-        :root { --bg: linear-gradient(135deg,#090d16,#131c31); --card: rgba(15,23,42,0.58); --inp: rgba(15,23,42,0.65); --txt:#f8fafc; --sub:#cbd5e1; --brd: rgba(255,255,255,0.16); }
+     :root { --bg: linear-gradient(135deg,#090d16,#131c31); --card: rgba(15,23,42,0.32); --inp: rgba(15,23,42,0.38); --txt:#f8fafc; --sub:#cbd5e1; --brd: rgba(255,255,255,0.22); }
+    
     body.spring { --bg: linear-gradient(135deg,#064e3b,#047857,#0f172a); }
     body.summer { --bg: linear-gradient(135deg,#0369a1,#0284c7,#0f766e); }
     body.autumn { --bg: linear-gradient(135deg,#451a03,#9a3412,#1e1b4b); }
-    body.winter { --bg: linear-gradient(135deg,#090d16,#1e3a8a,#312e81); }
+    body.light { --bg: linear-gradient(135deg,#e2e8f0,#f8fafc); --card: rgba(255,255,255,0.35); --inp: rgba(255,255,255,0.42); --txt:#0f172a; --sub:#334155; --brd: rgba(15,23,42,0.18); }
+    
     body.light { --bg: linear-gradient(135deg,#e2e8f0,#f8fafc); --card: rgba(255,255,255,0.62); --inp: rgba(255,255,255,0.72); --txt:#0f172a; --sub:#334155; --brd: rgba(15,23,42,0.14); }
     body.light.spring { --bg: linear-gradient(135deg,#bbf7d0,#fbcfe8,#ecfdf5); }
     body.light.summer { --bg: linear-gradient(135deg,#fde047,#7dd3fc,#bae6fd); }
@@ -26,7 +28,7 @@
     
     
 body { background: var(--bg); color: var(--txt); margin: 0; padding: 14px; min-height: 100vh; display: flex; justify-content: center; align-items: flex-start; transition: 0.25s; }
-    .box { width: 100%; max-width: 480px; background: var(--card); backdrop-filter: blur(12px); padding: 20px; border-radius: 22px; border: 1px solid var(--brd); box-shadow: 0 18px 40px rgba(0,0,0,0.35); }
+    .box { width: 100%; max-width: 480px; background: var(--card); backdrop-filter: blur(4px); padding: 20px; border-radius: 22px; border: 1px solid var(--brd); box-shadow: 0 18px 40px rgba(0,0,0,0.35); }
     .top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
     h1 { margin: 0; font-size: 21px; background: linear-gradient(90deg,#38bdf8,#818cf8); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
     h2 { font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px; margin: 16px 0 8px; color: var(--sub); }
