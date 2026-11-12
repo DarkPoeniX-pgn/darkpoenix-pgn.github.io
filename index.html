@@ -3,52 +3,65 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Vokabeltrainer Ultimate</title>
+  <title>Vokabeltrainer Pro</title>
   <style>
-    :root { --bg:#0f172a; --card:#1e293b; --inp:#0f172a; --txt:#f8fafc; --sub:#94a3b8; --brd:#475569; }
-    body.light { --bg:#f1f5f9; --card:#ffffff; --inp:#f8fafc; --txt:#0f172a; --sub:#475569; --brd:#cbd5e1; }
-    * { box-sizing: border-box; font-family: system-ui, sans-serif; }
-    body { background: var(--bg); color: var(--txt); margin: 0; padding: 12px; display: flex; justify-content: center; transition: 0.2s; }
-    .box { width: 100%; max-width: 490px; background: var(--card); padding: 16px; border-radius: 16px; box-shadow: 0 8px 20px rgba(0,0,0,0.25); }
-    .top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
-    h1 { margin: 0; font-size: 20px; color: #38bdf8; }
-    h2 { font-size: 14px; margin: 16px 0 8px; border-bottom: 1px solid var(--brd); padding-bottom: 4px; color: var(--sub); }
-    .stats { display: flex; justify-content: space-around; background: var(--inp); padding: 8px; border-radius: 10px; font-size: 13px; font-weight: bold; margin-bottom: 12px; border: 1px solid var(--brd); }
-    input, textarea, select { width: 100%; padding: 9px; margin-bottom: 7px; border-radius: 8px; border: 1px solid var(--brd); background: var(--inp); color: var(--txt); font-size: 14px; }
-    textarea { min-height: 75px; resize: vertical; }
-    button { width: 100%; padding: 10px; border: none; border-radius: 8px; font-size: 14px; font-weight: bold; cursor: pointer; margin-top: 4px; }
-    .row { display: flex; gap: 6px; align-items: center; }
-    .ico { width: auto; padding: 7px 10px; background: var(--inp); color: var(--txt); border: 1px solid var(--brd); margin: 0; }
-    .add { background: #22c55e; color: #052e16; }
-    .imp { background: #a855f7; color: #fff; }
-    .start { background: #38bdf8; color: #082f49; margin-top: 8px; }
-    .spd { background: #f43f5e; color: #fff; margin-top: 6px; }
-    .flp { background: #14b8a6; color: #042f2e; margin-top: 6px; }
-    .warn { background: #f59e0b; color: #451a03; margin-top: 6px; }
-    .sec { background: #475569; color: #fff; margin-top: 6px; }
-    .clr { background: transparent; border: 1px solid #ef4444; color: #f87171; font-size: 12px; padding: 6px; margin-top: 8px; }
-    .mini { width: auto; padding: 4px 7px; font-size: 12px; margin: 0 0 0 4px; }
-    ul { list-style: none; padding: 0; margin: 0; max-height: 165px; overflow-y: auto; }
-    li { display: flex; justify-content: space-between; align-items: center; background: var(--inp); padding: 7px 9px; border-radius: 8px; margin-bottom: 5px; font-size: 13px; border: 1px solid var(--brd); }
+    :root { --bg: linear-gradient(135deg,#090d16,#131c31); --card: rgba(30,41,59,0.92); --inp:#0f172a; --txt:#f8fafc; --sub:#94a3b8; --brd:#334155; }
+    body.light { --bg: linear-gradient(135deg,#e2e8f0,#f8fafc); --card: rgba(255,255,255,0.95); --inp:#f1f5f9; --txt:#0f172a; --sub:#475569; --brd:#cbd5e1; }
+    * { box-sizing: border-box; font-family: system-ui, -apple-system, sans-serif; -webkit-tap-highlight-color: transparent; }
+    body { background: var(--bg); color: var(--txt); margin: 0; padding: 14px; min-height: 100vh; display: flex; justify-content: center; align-items: flex-start; transition: 0.25s; }
+    .box { width: 100%; max-width: 480px; background: var(--card); backdrop-filter: blur(12px); padding: 20px; border-radius: 22px; border: 1px solid var(--brd); box-shadow: 0 18px 40px rgba(0,0,0,0.35); }
+    .top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+    h1 { margin: 0; font-size: 21px; background: linear-gradient(90deg,#38bdf8,#818cf8); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    h2 { font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px; margin: 16px 0 8px; color: var(--sub); }
+    .stats { display: flex; justify-content: space-around; background: var(--inp); padding: 10px; border-radius: 12px; font-size: 13px; font-weight: bold; margin-bottom: 14px; border: 1px solid var(--brd); }
+    .tabs { display: flex; gap: 6px; background: var(--inp); padding: 5px; border-radius: 14px; margin-bottom: 16px; border: 1px solid var(--brd); }
+    .tab { flex: 1; padding: 9px 4px; background: transparent; color: var(--sub); border-radius: 10px; font-size: 13px; margin: 0; transition: 0.2s; }
+    .tab.active { background: #38bdf8; color: #082f49; box-shadow: 0 2px 8px rgba(56,189,248,0.35); }
+    input, textarea, select { width: 100%; padding: 11px; margin-bottom: 8px; border-radius: 11px; border: 1px solid var(--brd); background: var(--inp); color: var(--txt); font-size: 15px; transition: border-color 0.2s; }
+    input:focus, textarea:focus, select:focus { outline: none; border-color: #38bdf8; }
+    textarea { min-height: 85px; resize: vertical; }
+    button { width: 100%; padding: 12px; border: none; border-radius: 12px; font-size: 15px; font-weight: bold; cursor: pointer; margin-top: 6px; transition: transform 0.12s, opacity 0.2s; }
+    button:active { transform: scale(0.97); }
+    .row { display: flex; gap: 8px; align-items: center; }
+    .ico { width: auto; padding: 8px 11px; background: var(--inp); color: var(--txt); border: 1px solid var(--brd); margin: 0; border-radius: 10px; }
+    .add { background: linear-gradient(135deg,#22c55e,#16a34a); color: #fff; }
+    .imp { background: linear-gradient(135deg,#a855f7,#7e22ce); color: #fff; }
+    .start { background: linear-gradient(135deg,#38bdf8,#0284c7); color: #fff; margin-top: 8px; }
+    .spd { background: linear-gradient(135deg,#f43f5e,#e11d48); color: #fff; margin-top: 8px; }
+    .flp { background: linear-gradient(135deg,#14b8a6,#0d9488); color: #fff; margin-top: 8px; }
+    .warn { background: linear-gradient(135deg,#f59e0b,#d97706); color: #fff; margin-top: 8px; }
+    .sec { background: #475569; color: #fff; margin-top: 8px; }
+    .clr { background: transparent; border: 1px solid #ef4444; color: #f87171; font-size: 13px; padding: 8px; margin-top: 12px; }
+    .mini { width: auto; padding: 5px 8px; font-size: 12px; margin: 0 0 0 4px; border-radius: 8px; }
+    ul { list-style: none; padding: 0; margin: 0; max-height: 280px; overflow-y: auto; }
+    li { display: flex; justify-content: space-between; align-items: center; background: var(--inp); padding: 10px 12px; border-radius: 11px; margin-bottom: 7px; font-size: 14px; border: 1px solid var(--brd); }
     #quiz, #speed-box, #flip-box { display: none; text-align: center; }
-    .bar-bg { width: 100%; height: 8px; background: var(--inp); border-radius: 4px; margin: 8px 0; overflow: hidden; }
-    .bar { height: 100%; background: #38bdf8; width: 0%; transition: width 0.3s; }
-    .t-bar { height: 100%; background: #f43f5e; width: 100%; }
-    .word { font-size: 25px; font-weight: bold; margin: 14px 0; color: #eab308; display: flex; justify-content: center; align-items: center; gap: 8px; }
-    .fb { margin-top: 10px; font-weight: bold; min-height: 20px; font-size: 14px; }
+    .bar-bg { width: 100%; height: 9px; background: var(--inp); border-radius: 6px; margin: 10px 0; overflow: hidden; }
+    .bar { height: 100%; background: linear-gradient(90deg,#38bdf8,#818cf8); width: 0%; transition: width 0.3s; }
+    .t-bar { height: 100%; background: linear-gradient(90deg,#f43f5e,#fb7185); width: 100%; }
+    .word { font-size: 27px; font-weight: bold; margin: 18px 0; color: #facc15; display: flex; justify-content: center; align-items: center; gap: 10px; }
+    .fb { margin-top: 12px; font-weight: bold; min-height: 22px; font-size: 15px; }
     .ok { color: #22c55e; }
     .no { color: #ef4444; }
-    .badge { font-size: 11px; padding: 2px 5px; border-radius: 4px; background: var(--card); color: var(--sub); border: 1px solid var(--brd); }
-    .opt { background: var(--inp); color: var(--txt); border: 1px solid var(--brd); margin-bottom: 7px; padding: 12px; font-size: 15px; }
+    .badge { font-size: 11px; padding: 2px 7px; border-radius: 99px; background: var(--card); color: var(--sub); border: 1px solid var(--brd); margin-left: 5px; }
+    .opt { background: var(--inp); color: var(--txt); border: 1px solid var(--brd); margin-bottom: 8px; padding: 14px; font-size: 16px; }
     .opt.right { background: #16a34a; border-color: #22c55e; color: #fff; }
     .opt.wrong { background: #dc2626; border-color: #ef4444; color: #fff; }
-    .card-ui { background: var(--inp); border: 2px solid #38bdf8; border-radius: 14px; padding: 36px 16px; margin: 14px 0; cursor: pointer; min-height: 150px; display: flex; flex-direction: column; justify-content: center; align-items: center; }
+    .flip-wrap { perspective: 1000px; margin: 16px 0; }
+    .card-ui { position: relative; width: 100%; min-height: 170px; transform-style: preserve-3d; transition: transform 0.5s cubic-bezier(.4,.2,.2,1); cursor: pointer; }
+    .card-ui.flipped { transform: rotateY(180deg); }
+    .face { position: absolute; inset: 0; backface-visibility: hidden; background: var(--inp); border: 2px solid #38bdf8; border-radius: 16px; padding: 24px 16px; display: flex; flex-direction: column; justify-content: center; align-items: center; }
+    .face.back { transform: rotateY(180deg); border-color: #22c55e; }
+    @keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-7px)} 75%{transform:translateX(7px)} }
+    .shake { animation: shake 0.28s; border-color: #ef4444 !important; }
+    #confetti { position: fixed; inset: 0; pointer-events: none; z-index: 99; }
   </style>
 </head>
 <body>
+<canvas id="confetti"></canvas>
 <div class="box">
   <div class="top">
-    <h1>📚 Vokabeltrainer</h1>
+    <h1>📚 Vokabeltrainer Pro</h1>
     <div class="row">
       <button class="ico" id="snd-btn" onclick="toggleSnd()">🔊</button>
       <button class="ico" onclick="toggleTheme()">🌓</button>
@@ -60,55 +73,64 @@
   </div>
 
   <div id="setup">
-    <h2>Ordner / Lektion & Sprache</h2>
-    <div class="row" style="margin-bottom:6px;">
-      <select id="deck-sel" style="margin:0;" onchange="changeDeck()"></select>
-      <button class="ico" onclick="newDeck()">+ Ordner</button>
-      <button class="ico" onclick="delDeck()">🗑️</button>
-    </div>
-    <div class="row">
-      <select id="lang" style="margin:0;">
-        <option value="en-US">🔊 Englisch (US)</option>
-        <option value="en-GB">🔊 Englisch (UK)</option>
-        <option value="fr-FR">🔊 Französisch</option>
-        <option value="es-ES">🔊 Spanisch</option>
-        <option value="it-IT">🔊 Italienisch</option>
-        <option value="la">🔊 Latein / Deutsch</option>
-      </select>
-      <select id="dir" style="margin:0;">
-        <option value="fb">Fremdwort ➔ DE</option>
-        <option value="bf">DE ➔ Fremdwort</option>
-        <option value="mix">Gemischt</option>
-      </select>
+    <div class="tabs">
+      <button class="tab active" id="t-learn" onclick="setTab('learn')">🎮 Lernen</button>
+      <button class="tab" id="t-add" onclick="setTab('add')">➕ Hinzufügen</button>
+      <button class="tab" id="t-list" onclick="setTab('list')">📋 Liste (<span id="cnt">0</span>)</button>
     </div>
 
-    <h2>Vokabel hinzufügen</h2>
-    <div class="row">
-      <input id="f" placeholder="Fremdwort" style="margin:0;">
-      <input id="b" placeholder="Übersetzung" style="margin:0;">
+    <div id="tab-learn">
+      <h2>Ordner & Einstellungen</h2>
+      <div class="row" style="margin-bottom:8px;">
+        <select id="deck-sel" style="margin:0;" onchange="changeDeck()"></select>
+        <button class="ico" onclick="newDeck()">+ Ordner</button>
+        <button class="ico" onclick="delDeck()">🗑️</button>
+      </div>
+      <div class="row" style="margin-bottom:10px;">
+        <select id="lang" style="margin:0;">
+          <option value="en-US">🔊 Englisch (US)</option>
+          <option value="en-GB">🔊 Englisch (UK)</option>
+          <option value="fr-FR">🔊 Französisch</option>
+          <option value="es-ES">🔊 Spanisch</option>
+          <option value="it-IT">🔊 Italienisch</option>
+          <option value="la">🔊 Latein / DE</option>
+        </select>
+        <select id="dir" style="margin:0;">
+          <option value="fb">Fremdwort ➔ DE</option>
+          <option value="bf">DE ➔ Fremdwort</option>
+          <option value="mix">Gemischt</option>
+        </select>
+      </div>
+      <h2>Spielmodus wählen</h2>
+      <button class="start" onclick="start(curV())">▶ Alle abfragen</button>
+      <button class="warn" onclick="startWeak()">🎯 Nur unsichere üben (&lt;2x ✓)</button>
+      <button class="flp" onclick="startFlip()">🗂️ 3D-Karteikarten</button>
+      <button class="spd" onclick="startSpeed()">⚡ Speed-Modus (10 Wörter / 5s)</button>
     </div>
-    <button class="add" onclick="add()">+ Speichern</button>
 
-    <h2>Liste importieren / exportieren</h2>
-    <textarea id="bulk" placeholder="apple - Apfel&#10;dog = Hund"></textarea>
-    <div class="row">
-      <button class="imp" onclick="imp()">📥 Importieren</button>
-      <button class="sec" style="margin-top:4px;" onclick="exp()">📤 Exportieren</button>
+    <div id="tab-add" style="display:none;">
+      <h2>Einzelne Vokabel speichern</h2>
+      <input id="f" placeholder="Fremdwort (z. B. apple)">
+      <input id="b" placeholder="Übersetzung (z. B. Apfel)">
+      <button class="add" onclick="add()">+ Vokabel speichern</button>
+      <h2>Ganze Liste importieren / exportieren</h2>
+      <textarea id="bulk" placeholder="apple - Apfel&#10;dog = Hund&#10;house ; Haus"></textarea>
+      <div class="row">
+        <button class="imp" onclick="imp()">📥 Importieren</button>
+        <button class="sec" style="margin-top:6px;" onclick="exp()">📤 Exportieren</button>
+      </div>
     </div>
 
-    <h2>Vokabeln in diesem Ordner (<span id="cnt">0</span>)</h2>
-    <ul id="list"></ul>
-
-    <button class="start" onclick="start(curV())">▶ Alle abfragen</button>
-    <button class="warn" onclick="startWeak()">🎯 Nur unsichere üben (&lt;2x ✓)</button>
-    <button class="flp" onclick="startFlip()">🗂️ Karteikarten-Modus</button>
-    <button class="spd" onclick="startSpeed()">⚡ Speed-Modus (10 Wörter / 5s)</button>
-    <button class="clr" onclick="clr()">Ordner leeren</button>
+    <div id="tab-list" style="display:none;">
+      <h2>Gespeicherte Vokabeln im Ordner</h2>
+      <ul id="list"></ul>
+      <button class="clr" onclick="clr()">Diesen Ordner komplett leeren</button>
+    </div>
   </div>
     <div id="quiz">
-    <div style="font-size:12px;color:var(--sub);">Richtig: <span id="sc">0</span> | Falsch: <span id="wr">0</span> | Offen: <span id="rem">0</span></div>
+    <div style="font-size:13px;color:var(--sub);">Richtig: <span id="sc">0</span> | Falsch: <span id="wr">0</span> | Offen: <span id="rem">0</span></div>
     <div class="bar-bg"><div class="bar" id="bar"></div></div>
-    <div id="dir-hint" style="font-size:12px;color:#38bdf8;"></div>
+    <div id="dir-hint" style="font-size:13px;color:#38bdf8;"></div>
     <div class="word"><span id="qw">---</span><button class="ico" onclick="speakCur(cur, askBack)">🔊</button></div>
     <input id="ans" placeholder="Antwort eingeben..." autocomplete="off">
     <button class="start" id="chk" onclick="chk()">Prüfen</button>
@@ -120,23 +142,31 @@
   </div>
 
   <div id="flip-box">
-    <div style="font-size:12px;color:var(--sub);">Karte <span id="fl-num">1</span>/<span id="fl-tot">0</span></div>
-    <div class="card-ui" onclick="flipCard()">
-      <div style="font-size:11px;color:var(--sub);margin-bottom:6px;" id="fl-side">VORDERSEITE (Tippen zum Drehen)</div>
-      <div style="font-size:24px;font-weight:bold;color:#eab308;" id="fl-txt">---</div>
+    <div style="font-size:13px;color:var(--sub);">Karte <span id="fl-num">1</span> / <span id="fl-tot">0</span></div>
+    <div class="flip-wrap" onclick="flipCard()">
+      <div class="card-ui" id="card-3d">
+        <div class="face">
+          <div style="font-size:11px;color:var(--sub);margin-bottom:8px;">FREMDWORT (Tippen zum Drehen)</div>
+          <div style="font-size:26px;font-weight:bold;color:#facc15;" id="fl-front">---</div>
+        </div>
+        <div class="face back">
+          <div style="font-size:11px;color:var(--sub);margin-bottom:8px;">ÜBERSETZUNG</div>
+          <div style="font-size:26px;font-weight:bold;color:#4ade80;" id="fl-back">---</div>
+        </div>
+      </div>
     </div>
-    <button class="ico" style="width:100%;margin-bottom:6px;" onclick="speakCur(flCur, false)">🔊 Fremdwort anhören</button>
+    <button class="ico" style="width:100%;margin-bottom:8px;" onclick="speakCur(flCur, false)">🔊 Fremdwort anhören</button>
     <div class="row">
-      <button class="warn" onclick="nextFlip(false)">❌ Nochmal üben</button>
+      <button class="warn" onclick="nextFlip(false)">❌ Nochmal</button>
       <button class="add" onclick="nextFlip(true)">✅ Gewusst</button>
     </div>
     <button class="sec" onclick="stop()">Zurück</button>
   </div>
 
   <div id="speed-box">
-    <div style="font-size:12px;color:var(--sub);">Frage <span id="s-num">1</span>/<span id="s-tot">10</span> | Punkte: <span id="s-sc">0</span></div>
+    <div style="font-size:13px;color:var(--sub);">Frage <span id="s-num">1</span>/<span id="s-tot">10</span> | Punkte: <span id="s-sc">0</span></div>
     <div class="bar-bg"><div class="t-bar" id="t-bar"></div></div>
-    <div id="s-hint" style="font-size:12px;color:#f43f5e;">⚡ Schnell wählen!</div>
+    <div id="s-hint" style="font-size:13px;color:#f43f5e;">⚡ Schnell wählen!</div>
     <div class="word"><span id="s-qw">---</span><button class="ico" onclick="speakCur(sCur, sBack)">🔊</button></div>
     <div id="s-opts"></div>
     <div class="fb" id="s-fb"></div>
@@ -148,13 +178,32 @@
   let db = JSON.parse(localStorage.getItem('vokDB')) || { decks: { 'Standard': JSON.parse(localStorage.getItem('vok')) || [] }, cur: 'Standard', hi: 0, streak: 0, last: '' };
   let snd = localStorage.getItem('vokSnd') !== '0', q = [], wrongList = [], cur = null, sc = 0, total = 0, askBack = false;
   let sq = [], sCur = null, sSc = 0, sTot = 0, sTimer = null, sLocked = false, sBack = false;
-  let flQ = [], flCur = null, flFlipped = false, flTot = 0;
+  let flQ = [], flCur = null, flTot = 0;
 
   if (localStorage.getItem('vokLight') === '1') document.body.classList.add('light');
   document.getElementById('snd-btn').textContent = snd ? '🔊' : '🔇';
 
   const curV = () => db.decks[db.cur] || [];
   const save = () => { localStorage.setItem('vokDB', JSON.stringify(db)); render(); };
+
+  function setTab(name) {
+    ['learn', 'add', 'list'].forEach(t => {
+      document.getElementById('tab-' + t).style.display = t === name ? 'block' : 'none';
+      document.getElementById('t-' + t).classList.toggle('active', t === name);
+    });
+  }
+
+  function fireConfetti() {
+    let cv = document.getElementById('confetti'), ctx = cv.getContext('2d');
+    cv.width = innerWidth; cv.height = innerHeight;
+    let ps = Array.from({ length: 65 }, () => ({ x: Math.random() * cv.width, y: -20, vy: 3 + Math.random() * 4, vx: (Math.random() - 0.5) * 4, c: ['#38bdf8','#22c55e','#facc15','#f43f5e','#a855f7'][Math.floor(Math.random() * 5)] }));
+    let frames = 0;
+    (function loop() {
+      ctx.clearRect(0, 0, cv.width, cv.height);
+      ps.forEach(p => { p.x += p.vx; p.y += p.vy; ctx.fillStyle = p.c; ctx.fillRect(p.x, p.y, 7, 7); });
+      if (++frames < 110) requestAnimationFrame(loop); else ctx.clearRect(0, 0, cv.width, cv.height);
+    })();
+  }
 
   function markLearned() {
     let today = new Date().toISOString().slice(0, 10), yest = new Date(Date.now() - 86400000).toISOString().slice(0, 10);
@@ -195,7 +244,7 @@
   }
 
   function newDeck() { let n = prompt('Name für neuen Ordner:'); if (n && n.trim() && !db.decks[n.trim()]) { db.decks[n.trim()] = []; db.cur = n.trim(); save(); } }
-  function delDeck() { if (Object.keys(db.decks).length <= 1) return alert('Letzter Ordner kann nicht gelöscht werden.'); if (confirm(`Ordner "${db.cur}" löschen?`)) { delete db.decks[db.cur]; db.cur = Object.keys(db.decks)[0]; save(); } }
+  function delDeck() { if (Object.keys(db.decks).length <= 1) return alert('Letzter Ordner kann nicht gelöscht werden.'); if (confirm(`Ordner "${db.cur}" löschen?`)) { delete db.decks[db.cur]; db.cur = Object.keys(db.decks); save(); } }
   const changeDeck = () => { db.cur = document.getElementById('deck-sel').value; save(); };
 
   function add() {
@@ -212,7 +261,7 @@
     let t = document.getElementById('bulk'), c = 0;
     t.value.split('\n').forEach(l => {
       let m = l.trim().match(/^(.+?)\s*(?:[-–=;:\t])\s*(.+)$/);
-      if (m) { curV().push({ f: m[1].trim(), b: m[2].trim(), ok: 0 }); c++; }
+      if (m) { curV().push({ f: m.trim(), b: m.trim(), ok: 0 }); c++; }
     });
     if (c) { t.value = ''; save(); alert(c + ' Vokabeln importiert!'); } else alert('Format: Wort - Übersetzung');
   }
@@ -227,13 +276,14 @@
   }
   function nxt() {
     let fb = document.getElementById('fb'), ans = document.getElementById('ans'), mode = document.getElementById('dir').value;
-    fb.textContent = ''; fb.className = 'fb'; ans.value = ''; ans.disabled = false;
+    fb.textContent = ''; fb.className = 'fb'; ans.value = ''; ans.disabled = false; ans.classList.remove('shake');
     document.getElementById('chk').style.display = 'block'; document.getElementById('hint-btn').style.display = 'block'; document.getElementById('nxt').style.display = 'none';
     document.getElementById('bar').style.width = (((total - q.length) / total) * 100) + '%';
     if (!q.length) {
       document.getElementById('qw').textContent = '🎉 Fertig!'; document.getElementById('dir-hint').textContent = '';
       fb.textContent = `${sc} von ${total} richtig!`; fb.classList.add('ok'); ans.style.display = 'none';
       document.getElementById('chk').style.display = 'none'; document.getElementById('hint-btn').style.display = 'none'; document.getElementById('rem').textContent = '0';
+      if (sc === total) fireConfetti();
       if (wrongList.length) document.getElementById('rep').style.display = 'block'; markLearned(); save(); return;
     }
     ans.style.display = 'block'; cur = q.pop(); askBack = mode === 'bf' || (mode === 'mix' && Math.random() < 0.5);
@@ -248,13 +298,21 @@
     ans.disabled = true; document.getElementById('chk').style.display = 'none'; document.getElementById('hint-btn').style.display = 'none'; document.getElementById('nxt').style.display = 'block';
     if (target.toLowerCase().split(/[,/]/).map(s => s.trim()).includes(ans.value.trim().toLowerCase())) {
       sc++; cur.ok = (cur.ok || 0) + 1; beep(true); document.getElementById('sc').textContent = sc; fb.textContent = '✅ Richtig!'; fb.classList.add('ok');
-    } else { wrongList.push(cur); beep(false); document.getElementById('wr').textContent = wrongList.length; fb.textContent = '❌ Falsch! Richtig: ' + target; fb.classList.add('no'); }
+    } else {
+      wrongList.push(cur); beep(false); ans.classList.add('shake');
+      document.getElementById('wr').textContent = wrongList.length; fb.textContent = '❌ Falsch! Richtig: ' + target; fb.classList.add('no');
+    }
   }
   document.getElementById('ans').addEventListener('keypress', e => { if (e.key === 'Enter') document.getElementById('chk').style.display !== 'none' ? chk() : nxt(); });
 
   function startFlip() { if (!curV().length) return alert('Ordner ist leer!'); flQ = [...curV()].sort(() => Math.random() - 0.5); flTot = flQ.length; document.getElementById('setup').style.display = 'none'; document.getElementById('flip-box').style.display = 'block'; loadFlip(); }
-  function loadFlip() { if (!flQ.length) { alert('Alle Karten durch!'); markLearned(); save(); stop(); return; } flCur = flQ.pop(); flFlipped = false; document.getElementById('fl-num').textContent = flTot - flQ.length; document.getElementById('fl-tot').textContent = flTot; document.getElementById('fl-side').textContent = 'FREMDWORT (Tippen zum Drehen)'; document.getElementById('fl-txt').textContent = flCur.f; }
-  function flipCard() { flFlipped = !flFlipped; document.getElementById('fl-side').textContent = flFlipped ? 'ÜBERSETZUNG' : 'FREMDWORT'; document.getElementById('fl-txt').textContent = flFlipped ? flCur.b : flCur.f; }
+  function loadFlip() {
+    if (!flQ.length) { fireConfetti(); alert('Alle Karten durch!'); markLearned(); save(); stop(); return; }
+    flCur = flQ.pop(); document.getElementById('card-3d').classList.remove('flipped');
+    document.getElementById('fl-num').textContent = flTot - flQ.length; document.getElementById('fl-tot').textContent = flTot;
+    document.getElementById('fl-front').textContent = flCur.f; document.getElementById('fl-back').textContent = flCur.b;
+  }
+  const flipCard = () => document.getElementById('card-3d').classList.toggle('flipped');
   function nextFlip(knew) { if (knew) { flCur.ok = (flCur.ok || 0) + 1; beep(true); } else { flQ.unshift(flCur); beep(false); } loadFlip(); }
 
   function startSpeed() {
@@ -265,7 +323,11 @@
   function nextSpeed() {
     clearInterval(sTimer); let fb = document.getElementById('s-fb'), optsEl = document.getElementById('s-opts'), tBar = document.getElementById('t-bar');
     fb.textContent = ''; fb.className = 'fb'; optsEl.innerHTML = '';
-    if (!sq.length) { document.getElementById('s-qw').textContent = '⚡ Vorbei!'; document.getElementById('s-hint').textContent = ''; tBar.style.width = '0%'; if (sTot === 10 && sSc > db.hi) db.hi = sSc; fb.textContent = `Punkte: ${sSc} von ${sTot}!`; fb.classList.add('ok'); document.getElementById('s-again').style.display = 'block'; markLearned(); save(); return; }
+    if (!sq.length) {
+      document.getElementById('s-qw').textContent = '⚡ Vorbei!'; document.getElementById('s-hint').textContent = ''; tBar.style.width = '0%';
+      if (sTot === 10 && sSc > db.hi) db.hi = sSc; if (sSc === sTot) fireConfetti();
+      fb.textContent = `Punkte: ${sSc} von ${sTot}!`; fb.classList.add('ok'); document.getElementById('s-again').style.display = 'block'; markLearned(); save(); return;
+    }
     sLocked = false; sCur = sq.pop(); let mode = document.getElementById('dir').value; sBack = mode === 'bf' || (mode === 'mix' && Math.random() < 0.5); let correctText = sBack ? sCur.f : sCur.b;
     document.getElementById('s-num').textContent = sTot - sq.length; document.getElementById('s-sc').textContent = sSc; document.getElementById('s-hint').textContent = sBack ? 'Fremdwort wählen:' : 'Übersetzung wählen:'; document.getElementById('s-qw').textContent = sBack ? sCur.b : sCur.f;
     let others = curV().filter(x => x !== sCur).sort(() => Math.random() - 0.5).slice(0, 2).map(x => sBack ? x.f : x.b);
