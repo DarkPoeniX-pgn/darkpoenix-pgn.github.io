@@ -5,10 +5,21 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Vokabeltrainer Pro</title>
   <style>
-    :root { --bg: linear-gradient(135deg,#090d16,#131c31); --card: rgba(30,41,59,0.92); --inp:#0f172a; --txt:#f8fafc; --sub:#94a3b8; --brd:#334155; }
-    body.light { --bg: linear-gradient(135deg,#e2e8f0,#f8fafc); --card: rgba(255,255,255,0.95); --inp:#f1f5f9; --txt:#0f172a; --sub:#475569; --brd:#cbd5e1; }
-    * { box-sizing: border-box; font-family: system-ui, -apple-system, sans-serif; -webkit-tap-highlight-color: transparent; }
-    body { background: var(--bg); color: var(--txt); margin: 0; padding: 14px; min-height: 100vh; display: flex; justify-content: center; align-items: flex-start; transition: 0.25s; }
+        :root { --bg: linear-gradient(135deg,#090d16,#131c31); --card: rgba(30,41,59,0.86); --inp: rgba(15,23,42,0.85); --txt:#f8fafc; --sub:#94a3b8; --brd:#334155; }
+    body.spring { --bg: linear-gradient(135deg,#064e3b,#065f46,#1e293b); }
+    body.summer { --bg: linear-gradient(135deg,#1e3a8a,#0369a1,#0f766e); }
+    body.autumn { --bg: linear-gradient(135deg,#451a03,#7c2d12,#1e1b4b); }
+    body.winter { --bg: linear-gradient(135deg,#0f172a,#1e3a8a,#312e81); }
+    body.light { --bg: linear-gradient(135deg,#e2e8f0,#f8fafc); --card: rgba(255,255,255,0.88); --inp: rgba(241,245,249,0.9); --txt:#0f172a; --sub:#475569; --brd:#cbd5e1; }
+    body.light.spring { --bg: linear-gradient(135deg,#dcfce7,#fce7f3,#f0fdf4); }
+    body.light.summer { --bg: linear-gradient(135deg,#fef08a,#bae6fd,#e0f2fe); }
+    body.light.autumn { --bg: linear-gradient(135deg,#ffedd5,#fecaca,#fef3c7); }
+    body.light.winter { --bg: linear-gradient(135deg,#e0f2fe,#e0e7ff,#f8fafc); }
+    #season-bg { position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
+    .box { position: relative; z-index: 1; }
+    
+    
+body { background: var(--bg); color: var(--txt); margin: 0; padding: 14px; min-height: 100vh; display: flex; justify-content: center; align-items: flex-start; transition: 0.25s; }
     .box { width: 100%; max-width: 480px; background: var(--card); backdrop-filter: blur(12px); padding: 20px; border-radius: 22px; border: 1px solid var(--brd); box-shadow: 0 18px 40px rgba(0,0,0,0.35); }
     .top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
     h1 { margin: 0; font-size: 21px; background: linear-gradient(90deg,#38bdf8,#818cf8); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
@@ -63,8 +74,11 @@
   <div class="top">
     <h1>📚 Vokabeltrainer Pro</h1>
     <div class="row">
-      <button class="ico" id="snd-btn" onclick="toggleSnd()">🔊</button>
+            <button class="ico" id="sea-btn" onclick="cycleSeason()" title="Jahreszeit wechseln">🍂</button>
+      
+            <button class="ico" id="snd-btn" onclick="toggleSnd()">🔊</button>
       <button class="ico" onclick="toggleTheme()">🌓</button>
+      
     </div>
   </div>
   <div class="stats">
@@ -343,6 +357,49 @@
     setTimeout(nextSpeed, 950);
   }
   const stop = () => { clearInterval(sTimer); ['quiz', 'speed-box', 'flip-box'].forEach(id => document.getElementById(id).style.display = 'none'); document.getElementById('setup').style.display = 'block'; render(); };
+    const seasons = ['winter', 'spring', 'summer', 'autumn'];
+  const seaIcons = { spring: '🌸', summer: '☀️', autumn: '🍂', winter: '❄️' };
+  const seaEmoji = { spring: ['🌸','🌱'], summer: ['✨','☀️'], autumn: ['🍂','🍁'], winter: ['❄️','✨'] };
+  let m = new Date().getMonth();
+  let curSea = localStorage.getItem('vokSea') || (m < 2 || m === 11 ? 'winter' : m < 5 ? 'spring' : m < 8 ? 'summer' : 'autumn');
+
+  function applySeason() {
+    document.body.classList.remove(...seasons);
+    document.body.classList.add(curSea);
+    document.getElementById('sea-btn').textContent = seaIcons[curSea];
+  }
+  function cycleSeason() {
+    curSea = seasons[(seasons.indexOf(curSea) + 1) % 4];
+    localStorage.setItem('vokSea', curSea);
+    applySeason();
+  }
+  applySeason();
+
+  (function startSeasonAnim() {
+    let cv = document.getElementById('season-bg'), ctx = cv.getContext('2d');
+    const resize = () => { cv.width = innerWidth; cv.height = innerHeight; };
+    resize(); window.addEventListener('resize', resize);
+    let items = Array.from({ length: 24 }, () => ({
+      x: Math.random() * innerWidth, y: Math.random() * innerHeight,
+      vy: 0.5 + Math.random() * 1.1, vx: (Math.random() - 0.5) * 0.6,
+      sz: 12 + Math.random() * 10, rot: Math.random() * 6, vr: (Math.random() - 0.5) * 0.03,
+      i: Math.floor(Math.random() * 2)
+    }));
+    (function loop() {
+      ctx.clearRect(0, 0, cv.width, cv.height);
+      ctx.globalAlpha = 0.45;
+      items.forEach(p => {
+        p.x += p.vx + Math.sin(p.y * 0.01) * 0.3; p.y += p.vy; p.rot += p.vr;
+        if (p.y > cv.height + 20) { p.y = -20; p.x = Math.random() * cv.width; }
+        ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(p.rot);
+        ctx.font = p.sz + 'px serif';
+        ctx.fillText(seaEmoji[curSea][p.i], 0, 0);
+        ctx.restore();
+      });
+      requestAnimationFrame(loop);
+    })();
+  })();
+  
   render();
 </script>
 </body>
