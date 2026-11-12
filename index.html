@@ -162,7 +162,7 @@
   }
 
   function beep(ok) {
-    if (navigator.vibrate) navigator.vibrate(ok ? 40 :);
+    if (navigator.vibrate) navigator.vibrate(ok ? 40 : 120);
     if (!snd) return;
     try {
       let ctx = new (window.AudioContext || window.webkitAudioContext)(), o = ctx.createOscillator(), g = ctx.createGain();
@@ -195,7 +195,7 @@
   }
 
   function newDeck() { let n = prompt('Name für neuen Ordner:'); if (n && n.trim() && !db.decks[n.trim()]) { db.decks[n.trim()] = []; db.cur = n.trim(); save(); } }
-  function delDeck() { if (Object.keys(db.decks).length <= 1) return alert('Letzter Ordner kann nicht gelöscht werden.'); if (confirm(`Ordner "${db.cur}" löschen?`)) { delete db.decks[db.cur]; db.cur = Object.keys(db.decks); save(); } }
+  function delDeck() { if (Object.keys(db.decks).length <= 1) return alert('Letzter Ordner kann nicht gelöscht werden.'); if (confirm(`Ordner "${db.cur}" löschen?`)) { delete db.decks[db.cur]; db.cur = Object.keys(db.decks)[0]; save(); } }
   const changeDeck = () => { db.cur = document.getElementById('deck-sel').value; save(); };
 
   function add() {
@@ -210,7 +210,10 @@
   }
   function imp() {
     let t = document.getElementById('bulk'), c = 0;
-    t.value.split('\n').forEach(l => { let m = l.trim().match(/^(.+?)\s*(?:[-–=;:\t])\s*(.+)$/); if (m) { curV().push({ f: m.trim(), b: m.trim(), ok: 0 }); c++; } });
+    t.value.split('\n').forEach(l => {
+      let m = l.trim().match(/^(.+?)\s*(?:[-–=;:\t])\s*(.+)$/);
+      if (m) { curV().push({ f: m[1].trim(), b: m[2].trim(), ok: 0 }); c++; }
+    });
     if (c) { t.value = ''; save(); alert(c + ' Vokabeln importiert!'); } else alert('Format: Wort - Übersetzung');
   }
   function exp() { if (!curV().length) return alert('Ordner ist leer!'); document.getElementById('bulk').value = curV().map(x => `${x.f} - ${x.b}`).join('\n'); alert('Liste steht oben im Textfeld!'); }
