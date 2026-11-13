@@ -459,18 +459,24 @@ body { background: var(--bg); color: var(--txt); margin: 0; padding: 14px; min-h
     animBtn.textContent = aus ? '✨ Animation: AUS' : '✨ Animation: AN';
     localStorage.setItem('animAus', aus);
   }
-    let rQ = [], rCur = null, pHp = 3, bHp = 100, bMax = 100;
-  const bosses = [['🐉','Vokabel-Drache'],['🤖','Grammatik-Bot'],['👾','Fehler-Alien'],['🧙‍♂️','Hexenmeister']];
+      let rQ = [], rCur = null, pHp = 3, bHp = 100, bMax = 100;
+  const bosses = [
+    { ico: '🐉', name: 'Vokabel-Drache' },
+    { ico: '🤖', name: 'Grammatik-Bot' },
+    { ico: '👾', name: 'Fehler-Alien' },
+    { ico: '🧙‍♂️', name: 'Hexenmeister' }
+  ];
 
   function startRPG() {
-    if (!v.length) return alert('Bitte erst Vokabeln eintragen!');
+    let list = typeof v !== 'undefined' ? v : (JSON.parse(localStorage.getItem('vok')) || []);
+    if (!list.length) return alert('Bitte erst Vokabeln eintragen!');
     document.getElementById('setup').style.display = 'none';
     document.getElementById('rpg-box').style.display = 'block';
     let b = bosses[Math.floor(Math.random() * bosses.length)];
-    document.getElementById('b-ico').textContent = b[0];
-    document.getElementById('b-name').textContent = b[1];
-    pHp = 3; bMax = Math.min(v.length, 8) * 20; bHp = bMax;
-    rQ = [...v].sort(() => Math.random() - 0.5);
+    document.getElementById('b-ico').textContent = b.ico;
+    document.getElementById('b-name').textContent = b.name;
+    pHp = 3; bMax = Math.min(list.length, 8) * 20; bHp = bMax;
+    rQ = [...list].sort(() => Math.random() - 0.5);
     updRPG(); nextRPG();
   }
 
@@ -486,9 +492,13 @@ body { background: var(--bg); color: var(--txt); margin: 0; padding: 14px; min-h
       fb.textContent = bHp <= 0 ? 'Du hast das Monster besiegt!' : 'Keine Herzen mehr übrig!';
       fb.className = 'fb ' + (bHp <= 0 ? 'ok' : 'no');
       ans.style.display = 'none'; document.getElementById('r-atk').style.display = 'none';
-      save(); return;
+      if (typeof save === 'function') save();
+      return;
     }
-    if (!rQ.length) rQ = [...v].sort(() => Math.random() - 0.5);
+    if (!rQ.length) {
+      let list = typeof v !== 'undefined' ? v : (JSON.parse(localStorage.getItem('vok')) || []);
+      rQ = [...list].sort(() => Math.random() - 0.5);
+    }
     rCur = rQ.pop();
     ans.style.display = 'block'; document.getElementById('r-atk').style.display = 'block';
     ans.value = ''; fb.textContent = '';
@@ -510,6 +520,7 @@ body { background: var(--bg); color: var(--txt); margin: 0; padding: 14px; min-h
     }
     updRPG(); setTimeout(nextRPG, 1100);
   }
+  
   
 </script>
 </body>
