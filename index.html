@@ -74,9 +74,15 @@ body { background: var(--bg); color: var(--txt); margin: 0; padding: 14px; min-h
     @keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-7px)} 75%{transform:translateX(7px)} }
     .shake { animation: shake 0.28s; border-color: #ef4444 !important; }
     #confetti { position: fixed; inset: 0; pointer-events: none; z-index: 99; }
+        #anim-btn { position: fixed; top: 10px; right: 10px; z-index: 9999; width: auto; background: #1e293b; color: #f8fafc; border: 1px solid #475569; padding: 6px 12px; border-radius: 20px; font-size: 12px; cursor: pointer; }
+    body.no-anim, body.no-anim * { animation: none !important; transition: none !important; }
+    body.no-anim canvas, body.no-anim .bg-animation, body.no-anim #particles-js { display: none !important; }
+    
   </style>
 </head>
 <body>
+    <button id="anim-btn" onclick="toggleAnim()">✨ Animation: AN</button>
+  
 <canvas id="confetti"></canvas>
   <canvas id="season-bg"></canvas>
 <div id="season-scene">🌲⛄🌲🏔️🌲❄️🌲</div>
@@ -420,6 +426,17 @@ body { background: var(--bg); color: var(--txt); margin: 0; padding: 14px; min-h
                                                   
   
   render();
+    const animBtn = document.getElementById('anim-btn');
+  if (localStorage.getItem('animAus') === 'true') {
+    document.body.classList.add('no-anim');
+    animBtn.textContent = '✨ Animation: AUS';
+  }
+  function toggleAnim() {
+    const aus = document.body.classList.toggle('no-anim');
+    animBtn.textContent = aus ? '✨ Animation: AUS' : '✨ Animation: AN';
+    localStorage.setItem('animAus', aus);
+  }
+  
 </script>
 </body>
 </html>
