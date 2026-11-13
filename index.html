@@ -77,6 +77,14 @@ body { background: var(--bg); color: var(--txt); margin: 0; padding: 14px; min-h
         #anim-btn { position: fixed; top: 10px; right: 10px; z-index: 9999; width: auto; background: #1e293b; color: #f8fafc; border: 1px solid #475569; padding: 6px 12px; border-radius: 20px; font-size: 12px; cursor: pointer; }
     body.no-anim, body.no-anim * { animation: none !important; transition: none !important; }
     body.no-anim canvas, body.no-anim .bg-animation, body.no-anim #particles-js { display: none !important; }
+        .rpg-btn { background: linear-gradient(135deg, #ec4899, #8b5cf6); color: #fff; margin-top: 8px; }
+    #rpg-box { display: none; text-align: center; }
+    .boss-card { background: #0f172a; padding: 14px; border-radius: 12px; border: 1px solid #334155; margin: 10px 0; }
+    .boss-icon { font-size: 48px; display: inline-block; transition: transform 0.2s; }
+    .boss-hit { transform: scale(0.8) rotate(12deg); filter: brightness(2); }
+    .hp-bg { width: 100%; height: 10px; background: #334155; border-radius: 5px; overflow: hidden; margin-top: 6px; }
+    .hp-bar { height: 100%; background: #ef4444; width: 100%; transition: width 0.3s; }
+    .hearts { font-size: 20px; letter-spacing: 4px; margin-bottom: 6px; }
     
   </style>
 </head>
@@ -137,6 +145,8 @@ body { background: var(--bg); color: var(--txt); margin: 0; padding: 14px; min-h
       <button class="warn" onclick="startWeak()">🎯 Nur unsichere üben (&lt;2x ✓)</button>
       <button class="flp" onclick="startFlip()">🗂️ 3D-Karteikarten</button>
       <button class="spd" onclick="startSpeed()">⚡ Speed-Modus (10 Wörter / 5s)</button>
+          <button class="rpg-btn" onclick="startRPG()">👾 Vokabel-Bosskampf</button>
+      
     </div>
 
     <div id="tab-add" style="display:none;">
@@ -193,7 +203,20 @@ body { background: var(--bg); color: var(--txt); margin: 0; padding: 14px; min-h
     </div>
     <button class="sec" onclick="stop()">Zurück</button>
   </div>
-
+  <div id="rpg-box">
+    <div class="hearts" id="r-hp">❤️❤️❤️</div>
+    <div class="boss-card">
+      <div class="boss-icon" id="b-ico">🐉</div>
+      <div style="font-weight:bold;color:#f472b6;" id="b-name">Vokabel-Drache</div>
+      <div class="hp-bg"><div class="hp-bar" id="b-bar"></div></div>
+    </div>
+    <div class="word" id="r-qw">---</div>
+    <input id="r-ans" placeholder="Angriff durch Übersetzung..." autocomplete="off">
+    <button class="rpg-btn" id="r-atk" onclick="atkRPG()">⚔️ Angreifen</button>
+    <div class="fb" id="r-fb"></div>
+    <button class="sec" onclick="stop()">Fliehen / Zurück</button>
+  </div>
+  
   <div id="speed-box">
     <div style="font-size:13px;color:var(--sub);">Frage <span id="s-num">1</span>/<span id="s-tot">10</span> | Punkte: <span id="s-sc">0</span></div>
     <div class="bar-bg"><div class="t-bar" id="t-bar"></div></div>
@@ -435,6 +458,57 @@ body { background: var(--bg); color: var(--txt); margin: 0; padding: 14px; min-h
     const aus = document.body.classList.toggle('no-anim');
     animBtn.textContent = aus ? '✨ Animation: AUS' : '✨ Animation: AN';
     localStorage.setItem('animAus', aus);
+  }
+    let rQ = [], rCur = null, pHp = 3, bHp = 100, bMax = 100;
+  const bosses = [['🐉','Vokabel-Drache'],['🤖','Grammatik-Bot'],['👾','Fehler-Alien'],['🧙‍♂️','Hexenmeister']];
+
+  function startRPG() {
+    if (!v.length) return alert('Bitte erst Vokabeln eintragen!');
+    document.getElementById('setup').style.display = 'none';
+    document.getElementById('rpg-box').style.display = 'block';
+    let b = bosses[Math.floor(Math.random() * bosses.length)];
+    document.getElementById('b-ico').textContent = b[0];
+    document.getElementById('b-name').textContent = b[1];
+    pHp = 3; bMax = Math.min(v.length, 8) * 20; bHp = bMax;
+    rQ = [...v].sort(() => Math.random() - 0.5);
+    updRPG(); nextRPG();
+  }
+
+  function updRPG() {
+    document.getElementById('r-hp').textContent = '❤️'.repeat(pHp) + '🖤'.repeat(3 - pHp);
+    document.getElementById('b-bar').style.width = Math.max(0, (bHp / bMax) * 100) + '%';
+  }
+
+  function nextRPG() {
+    let ans = document.getElementById('r-ans'), fb = document.getElementById('r-fb');
+    if (bHp <= 0 || pHp <= 0) {
+      document.getElementById('r-qw').textContent = bHp <= 0 ? '🏆 SIEG!' : '💀 NIEDERLAGE!';
+      fb.textContent = bHp <= 0 ? 'Du hast das Monster besiegt!' : 'Keine Herzen mehr übrig!';
+      fb.className = 'fb ' + (bHp <= 0 ? 'ok' : 'no');
+      ans.style.display = 'none'; document.getElementById('r-atk').style.display = 'none';
+      save(); return;
+    }
+    if (!rQ.length) rQ = [...v].sort(() => Math.random() - 0.5);
+    rCur = rQ.pop();
+    ans.style.display = 'block'; document.getElementById('r-atk').style.display = 'block';
+    ans.value = ''; fb.textContent = '';
+    document.getElementById('r-qw').textContent = rCur.f;
+    ans.focus();
+  }
+
+  function atkRPG() {
+    let ans = document.getElementById('r-ans'), fb = document.getElementById('r-fb'), ico = document.getElementById('b-ico');
+    if (!ans.value.trim()) return;
+    let valid = rCur.b.toLowerCase().split(/[,/]/).map(s => s.trim());
+    if (valid.includes(ans.value.trim().toLowerCase())) {
+      bHp -= 20; rCur.ok = (rCur.ok || 0) + 1;
+      ico.classList.add('boss-hit'); setTimeout(() => ico.classList.remove('boss-hit'), 250);
+      fb.textContent = '💥 Volltreffer! -20 HP'; fb.className = 'fb ok';
+    } else {
+      pHp--;
+      fb.textContent = '💔 Daneben! Richtig: ' + rCur.b; fb.className = 'fb no';
+    }
+    updRPG(); setTimeout(nextRPG, 1100);
   }
   
 </script>
