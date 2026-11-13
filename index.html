@@ -459,7 +459,7 @@ body { background: var(--bg); color: var(--txt); margin: 0; padding: 14px; min-h
     animBtn.textContent = aus ? '✨ Animation: AUS' : '✨ Animation: AN';
     localStorage.setItem('animAus', aus);
   }
-      let rQ = [], rCur = null, pHp = 3, bHp = 100, bMax = 100;
+        let rQ = [], rCur = null, pHp = 3, bHp = 100, bMax = 100;
   const bosses = [
     { ico: '🐉', name: 'Vokabel-Drache' },
     { ico: '🤖', name: 'Grammatik-Bot' },
@@ -468,9 +468,15 @@ body { background: var(--bg); color: var(--txt); margin: 0; padding: 14px; min-h
   ];
 
   function startRPG() {
-    let list = typeof v !== 'undefined' ? v : (JSON.parse(localStorage.getItem('vok')) || []);
+    let list = typeof getPool === 'function' ? getPool() : (typeof v !== 'undefined' ? v : (JSON.parse(localStorage.getItem('vok')) || []));
     if (!list.length) return alert('Bitte erst Vokabeln eintragen!');
-    document.getElementById('setup').style.display = 'none';
+
+    // Blendet alle bekannten Hauptmenü-Container sauber aus
+    ['setup', 'home', 'main', 'menu', 'dashboard', 'start-view'].forEach(id => {
+      let el = document.getElementById(id);
+      if (el) el.style.display = 'none';
+    });
+
     document.getElementById('rpg-box').style.display = 'block';
     let b = bosses[Math.floor(Math.random() * bosses.length)];
     document.getElementById('b-ico').textContent = b.ico;
@@ -496,7 +502,7 @@ body { background: var(--bg); color: var(--txt); margin: 0; padding: 14px; min-h
       return;
     }
     if (!rQ.length) {
-      let list = typeof v !== 'undefined' ? v : (JSON.parse(localStorage.getItem('vok')) || []);
+      let list = typeof getPool === 'function' ? getPool() : (typeof v !== 'undefined' ? v : (JSON.parse(localStorage.getItem('vok')) || []));
       rQ = [...list].sort(() => Math.random() - 0.5);
     }
     rCur = rQ.pop();
@@ -520,6 +526,19 @@ body { background: var(--bg); color: var(--txt); margin: 0; padding: 14px; min-h
     }
     updRPG(); setTimeout(nextRPG, 1100);
   }
+
+  // Enter-Taste zum Angreifen aktivieren
+  document.getElementById('r-ans').addEventListener('keypress', e => {
+    if (e.key === 'Enter') atkRPG();
+  });
+
+  // Erweitert deine bestehende stop()-Funktion automatisch, damit rpg-box mit geschlossen wird
+  const origStop = typeof stop === 'function' ? stop : null;
+  stop = function() {
+    document.getElementById('rpg-box').style.display = 'none';
+    if (origStop) origStop();
+  };
+  
   
   
 </script>
